@@ -90,7 +90,7 @@ export default function Assistant() {
         <div ref={endRef} />
       </div>
 
-      <div className="sticky bottom-[calc(106px_+_max(0px,_env(safe-area-inset-bottom)_-_24px))] flex flex-col gap-2 bg-bg pt-2">
+      <div className="sticky bottom-[calc(106px_+_max(0px,_env(safe-area-inset-bottom)_-_24px))] flex flex-col gap-2 bg-bg pt-2 md:bottom-4">
         {left === 0 ? (
           <Link to="/planes" className="rounded-xl bg-pri px-4 py-3.5 text-center text-[15px] font-semibold text-white">
             Usaste tus {AI_FREE_LIMIT} preguntas gratis de este mes · Ver Pro
