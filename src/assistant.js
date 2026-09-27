@@ -1,4 +1,4 @@
-// Respuestas predefinidas mientras se conecta el modelo de IA real (fase 2).
+// Respuestas locales de respaldo cuando el backend no está disponible.
 const RULES = [
   [
     /\brut\b|dian/i,
@@ -52,10 +52,32 @@ const RULES = [
   ],
 ]
 
-const FALLBACK =
-  'Buena pregunta. Todavía estoy aprendiendo sobre ese tema. Mientras tanto, revisa tu ruta: cada paso tiene guías y plantillas para avanzar. Si me cuentas más detalles de tu negocio, puedo orientarte mejor.'
+const FALLBACK = {
+  text: 'Buena pregunta. Todavía estoy aprendiendo sobre ese tema. Mientras tanto, revisa tu ruta: cada paso tiene guías y plantillas para avanzar. Si me cuentas más detalles de tu negocio, puedo orientarte mejor.',
+  action: { label: 'Ver mi ruta', to: '/ruta' },
+}
 
-export function reply(question) {
+function localReply(question) {
   for (const [re, text, action] of RULES) if (re.test(question)) return { text, action }
-  return { text: FALLBACK, action: { label: 'Ver mi ruta', to: '/ruta' } }
+  return FALLBACK
+}
+
+// Llama al backend. Recibe el historial completo de mensajes { role, text }.
+export async function reply(messages) {
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: messages.map((m) => ({ role: m.role, content: m.text })),
+      }),
+    })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    const { content } = await res.json()
+    return { text: content, action: null }
+  } catch {
+    // Fallback al sistema de reglas si el backend no está disponible.
+    const last = messages.at(-1)?.text ?? ''
+    return localReply(last)
+  }
 }
