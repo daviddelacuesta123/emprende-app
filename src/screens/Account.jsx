@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router'
 import { ChevronRight, Crown, LogOut, Sparkles, Store } from 'lucide-react'
 import { useAuth } from '../auth'
 import { STEPS } from '../data'
-import { AI_FREE_LIMIT, currentStepIndex, useStore } from '../store'
+import { AI_FREE_LIMIT, aiLeft, currentStepIndex, useStore } from '../store'
 import { Avatar, Button, Card, ProgressBar, Screen, Sheet } from '../ui'
 import { STAGES } from './Onboarding'
 
@@ -111,9 +111,9 @@ export default function Account() {
             <div className="flex flex-col gap-2">
               <span className="flex items-center gap-2 text-[13px] text-mut">
                 <Sparkles size={16} strokeWidth={1.8} className="text-pri" />
-                {Math.min(state.ai.used, AI_FREE_LIMIT)} de {AI_FREE_LIMIT} preguntas al asistente este mes
+                Te quedan {aiLeft(state.ai)} de {AI_FREE_LIMIT} preguntas al asistente este mes
               </span>
-              <ProgressBar value={Math.min(state.ai.used / AI_FREE_LIMIT, 1)} />
+              <ProgressBar value={aiLeft(state.ai) / AI_FREE_LIMIT} />
             </div>
             <Button onClick={() => nav('/planes')} className="mt-1">
               <Crown size={18} strokeWidth={1.8} /> Mejorar a Pro

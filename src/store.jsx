@@ -4,6 +4,7 @@ import { STEPS } from './data'
 export const LEGACY_KEY = 'emprende:v1'
 export const storeKey = (email) => `${LEGACY_KEY}:${email}`
 export const AI_FREE_LIMIT = 10
+export const aiLeft = (ai) => Math.max(0, AI_FREE_LIMIT - ai.used)
 
 const monthKey = () => new Date().toISOString().slice(0, 7)
 
