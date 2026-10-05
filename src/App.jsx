@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { HashRouter, Navigate, Outlet, Route, Routes } from 'react-router'
+import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from 'react-router'
 import { AuthProvider, useAuth } from './auth'
 import { StoreProvider, storeKey, useStore } from './store'
 import { Sidebar, TabBar } from './ui'
@@ -18,7 +18,8 @@ import Landing from './screens/Landing'
 
 function RequireAuth() {
   const { session } = useAuth()
-  if (!session) return <Navigate to="/conoce" replace />
+  const { pathname } = useLocation()
+  if (!session) return pathname === '/' ? <Landing /> : <Navigate to="/" replace />
   return (
     <StoreProvider key={session} storageKey={storeKey(session)}>
       <Outlet />
@@ -69,10 +70,10 @@ function WithTabs() {
 export default function App() {
   return (
     <AuthProvider>
-      <HashRouter>
+      <BrowserRouter>
         <div className="bg-bg">
           <Routes>
-            <Route path="/conoce" element={<Landing />} />
+            <Route path="/conoce" element={<Navigate to="/" replace />} />
             <Route element={<CenteredLayout />}>
               <Route path="/acceso" element={<Auth />} />
             </Route>
@@ -99,7 +100,7 @@ export default function App() {
           </Routes>
         </div>
         <BootSplash />
-      </HashRouter>
+      </BrowserRouter>
     </AuthProvider>
   )
 }

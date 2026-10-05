@@ -77,7 +77,7 @@ export default function Auth() {
 
   return (
     <Screen bottom="none" className="gap-7">
-      <Link to="/conoce" className="flex items-center gap-2.5 self-start pt-3">
+      <Link to="/" className="flex items-center gap-2.5 self-start pt-3">
         <Logo size={34} />
         <span className="text-[17px] font-bold tracking-tight">{APP_NAME}</span>
       </Link>
