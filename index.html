@@ -7,12 +7,12 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <title>EmprendiApp</title>
   </head>
   <body>
     <div id="root">
-      <div style="position:fixed;inset:0;background:#0F172A;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;font-family:Inter,system-ui,sans-serif">
+      <div id="boot" style="position:fixed;inset:0;background:#0F172A;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;font-family:Inter,system-ui,sans-serif">
         <svg viewBox="0 0 32 32" width="76" height="76" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#fff"/><path d="M16 7l2.3 6.7L25 16l-6.7 2.3L16 25l-2.3-6.7L7 16l6.7-2.3z" fill="#0F172A"/></svg>
         <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
           <span style="color:#fff;font-size:30px;font-weight:700;letter-spacing:-0.025em">EmprendiApp</span>
@@ -20,6 +20,11 @@
         </div>
       </div>
     </div>
+    <script>
+      try {
+        if (!localStorage.getItem("emprende:session")) document.getElementById("boot").remove()
+      } catch {}
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

@@ -14,10 +14,11 @@ import Templates from './screens/Templates'
 import TemplateDetail from './screens/TemplateDetail'
 import Plans from './screens/Plans'
 import Account from './screens/Account'
+import Landing from './screens/Landing'
 
 function RequireAuth() {
   const { session } = useAuth()
-  if (!session) return <Navigate to="/acceso" replace />
+  if (!session) return <Navigate to="/conoce" replace />
   return (
     <StoreProvider key={session} storageKey={storeKey(session)}>
       <Outlet />
@@ -49,6 +50,13 @@ function AppLayout() {
   )
 }
 
+function BootSplash() {
+  const { session } = useAuth()
+  const [show, setShow] = useState(() => !!session)
+  const hide = useCallback(() => setShow(false), [])
+  return show ? <Splash onDone={hide} /> : null
+}
+
 function WithTabs() {
   return (
     <>
@@ -59,14 +67,12 @@ function WithTabs() {
 }
 
 export default function App() {
-  const [splash, setSplash] = useState(true)
-  const hideSplash = useCallback(() => setSplash(false), [])
-
   return (
     <AuthProvider>
       <HashRouter>
         <div className="bg-bg">
           <Routes>
+            <Route path="/conoce" element={<Landing />} />
             <Route element={<CenteredLayout />}>
               <Route path="/acceso" element={<Auth />} />
             </Route>
@@ -92,7 +98,7 @@ export default function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
-        {splash && <Splash onDone={hideSplash} />}
+        <BootSplash />
       </HashRouter>
     </AuthProvider>
   )
