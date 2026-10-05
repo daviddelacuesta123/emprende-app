@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from 'react-router'
 import { AuthProvider, useAuth } from './auth'
-import { StoreProvider, storeKey, useStore } from './store'
+import { StoreProvider, useStore } from './store'
 import { Sidebar, TabBar } from './ui'
 import Splash from './screens/Splash'
 import Auth from './screens/Auth'
@@ -21,7 +21,7 @@ function RequireAuth() {
   const { pathname } = useLocation()
   if (!session) return pathname === '/' ? <Landing /> : <Navigate to="/" replace />
   return (
-    <StoreProvider key={session} storageKey={storeKey(session)}>
+    <StoreProvider key={session} userId={session}>
       <Outlet />
     </StoreProvider>
   )

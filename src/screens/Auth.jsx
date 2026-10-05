@@ -45,6 +45,7 @@ export default function Auth() {
   const [showPass, setShowPass] = useState(false)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+  const [notice, setNotice] = useState('')
 
   if (session) return <Navigate to="/" replace />
 
@@ -68,7 +69,12 @@ export default function Auth() {
     if (!valid || busy) return
     setBusy(true)
     try {
-      await (isReg ? register(form) : login(form))
+      const result = await (isReg ? register(form) : login(form))
+      if (result?.needsConfirmation) {
+        setNotice(`Te enviamos un correo a ${form.email.trim()}. Ábrelo para confirmar tu cuenta y luego inicia sesión.`)
+        setMode('login')
+        setBusy(false)
+      }
     } catch (err) {
       setError(err.message)
       setBusy(false)
@@ -151,6 +157,11 @@ export default function Auth() {
         {error && (
           <p role="alert" className="rounded-[10px] bg-red-50 px-3.5 py-2.5 text-[13px] font-medium text-red-700">
             {error}
+          </p>
+        )}
+        {notice && !error && (
+          <p role="status" className="rounded-[10px] bg-soft px-3.5 py-2.5 text-[13px] font-medium text-ink">
+            {notice}
           </p>
         )}
 
