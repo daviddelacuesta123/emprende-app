@@ -12,10 +12,13 @@ Diseño en Figma: https://www.figma.com/design/5XNY7S2Mg8aK01iACjcpVV
 
 ```bash
 npm install
+cp .env.example .env     # trae la dirección y la clave pública de Supabase
 npm run dev
 ```
 
 Abre `http://localhost:5173`. Sin sesión iniciada verás la portada; desde ahí puedes crear una cuenta.
+
+Sin el archivo `.env`, la página no arranca y la consola indica que faltan `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY`.
 
 ### Página + asistente con IA local
 
@@ -89,7 +92,29 @@ El servidor no depende de un proveedor específico. Para agregar uno (Claude API
 - **Planes:** Gratis y Pro ($19.900 COP al mes). El pago todavía no está conectado.
 - **Computador:** menú lateral en lugar de la barra inferior; los paneles se abren como ventanas centradas y se cierran con Escape.
 
-Todo se guarda en el navegador (`localStorage`), incluidas las cuentas: solo existen en el navegador donde se crearon.
+Las cuentas y los datos de cada usuario se guardan en Supabase, así que se pueden usar desde cualquier dispositivo.
+
+## Supabase (cuentas y datos)
+
+Proyecto: **Emprende-app** (`cnsomjvdcvkplgxvnywf`). La página se conecta con la dirección y la clave pública (`sb_publishable_…`) del archivo `.env`. Esa clave está hecha para usarse en el navegador; la protección de los datos la dan las reglas de cada tabla. **Nunca pongas en el proyecto la clave secreta** (`sb_secret_…` o `service_role`).
+
+| Tabla | Qué guarda |
+|---|---|
+| `perfiles` | Nombre, emprendimiento, etapa, plan y margen de la calculadora. Se crea sola al registrarse. |
+| `actividades_completadas` | Qué actividades de la ruta terminó cada usuario y cuándo |
+| `costos` | Filas de la calculadora de precio y del presupuesto inicial |
+| `plan_negocio` | Los 5 bloques del plan de negocio |
+| `mensajes_chat` | La conversación con el asistente |
+| `uso_asistente` | Preguntas usadas por mes (la escribe solo la base de datos) |
+
+Reglas importantes:
+
+- **Cada usuario solo puede leer y modificar sus propias filas** (RLS en todas las tablas). Sin sesión no se puede leer nada.
+- **El plan (Gratis/Pro) no lo puede cambiar el usuario:** solo se cambia desde Supabase.
+- **El límite de 10 preguntas gratis lo aplica la base de datos:** la pregunta 11 del mes se rechaza al guardarla. Si cambias el límite, cámbialo en `AI_FREE_LIMIT` (`src/store.jsx`) y en `private.contar_pregunta()`.
+- **Confirmación de correo:** debe estar **desactivada** mientras prueban (Authentication → Sign In / Providers → Email → *Confirm email*). Si se activa, la app ya muestra el aviso de "revisa tu correo", pero el servicio de correo gratuito de Supabase solo envía unos pocos correos por hora.
+
+Los cambios a la base de datos están en `supabase/migrations/`, en el orden en que se aplicaron. Cualquier cambio nuevo debe ir en un archivo nuevo ahí.
 
 ## Direcciones y publicación
 
@@ -108,8 +133,9 @@ Al publicar solo la página, el asistente usará las respuestas predefinidas, po
 src/                          # Página (React + Vite + Tailwind)
   main.jsx                    # Punto de entrada; convierte enlaces viejos con "#/"
   App.jsx                     # Rutas, protección de sesión y diseño general
-  auth.jsx                    # Registro, inicio y cierre de sesión (locales)
-  store.jsx                   # Estado de la app y guardado por usuario
+  supabase.js                 # Conexión con Supabase
+  auth.jsx                    # Registro, inicio y cierre de sesión con Supabase
+  store.jsx                   # Carga los datos del usuario y guarda cada cambio en su tabla
   data.js                     # Contenido de la ruta, plantillas y preguntas de entrevista
   assistant.js                # Llama al servidor del asistente; si falla, usa respuestas predefinidas
   ui.jsx                      # Componentes compartidos (botones, paneles, barra y menú lateral)
@@ -134,6 +160,8 @@ docs/
   mvp.md                      # Resultados de la encuesta y decisiones del MVP
   encuesta-respuestas.csv     # Respuestas completas de la encuesta
 
+supabase/migrations/          # Cambios a la base de datos, en orden
+
 vercel.json, public/_redirects  # Reglas de publicación
 ```
 
@@ -144,13 +172,14 @@ vercel.json, public/_redirects  # Reglas de publicación
 - **No hay tiempo límite de espera:** si la IA se cuelga, el chat se queda en "Escribiendo…".
 - **Si la IA falla, el usuario no se entera:** recibe una respuesta predefinida y la pregunta igual se descuenta.
 - **Se envía la conversación completa en cada pregunta**, lo que vuelve lento a un modelo pequeño en chats largos.
-- **El servidor acepta mensajes con rol `system`** desde la página y no tiene límite de uso propio: el límite de 10 preguntas solo existe en la página.
+- **El servidor del asistente acepta mensajes con rol `system`** desde la página, y no pide sesión ni tiene límite propio: el límite de 10 preguntas se aplica al guardar el mensaje en Supabase, pero alguien podría llamar a `/api/chat` directamente.
+- **Recuperación de contraseña:** todavía no hay pantalla para "Olvidé mi contraseña".
 
 ## Siguientes pasos
 
-1. **Publicar la página** en Vercel (la configuración ya está lista).
-2. **Cuentas y datos en la nube** con Supabase, con recuperación de contraseña, para que no dependan del navegador.
+1. **Publicar la página** en Vercel (la configuración ya está lista; hay que agregar las variables `VITE_SUPABASE_*` en Vercel).
+2. **Recuperar contraseña** y, opcionalmente, **entrar con Google**.
 3. **Política de privacidad, términos y opción de borrar la cuenta** (Ley 1581 de 2012).
-4. **Publicar el servidor del asistente** (Railway, Fly.io, etc.) o pasar a una IA en la nube, con el límite de preguntas controlado en el servidor.
+4. **Publicar el servidor del asistente** (Railway, Fly.io, etc.) o pasar a una IA en la nube, pidiendo la sesión de Supabase en cada pregunta.
 5. **Pagos** para el plan Pro (Wompi o Mercado Pago) y construir lo que promete: exportar, recordatorios y plantillas Pro.
 6. Fase 2 según la encuesta: dashboard de métricas y comunidad con mentores.

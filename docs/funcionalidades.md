@@ -42,7 +42,7 @@ Las secciones aparecen suavemente a medida que se baja por la página. Si la per
 - Se puede mostrar u ocultar la contraseña.
 - Mensajes claros si el correo ya está registrado o si los datos no coinciden.
 - El logo lleva de vuelta a la portada.
-- Cada cuenta guarda su propio progreso: si dos personas usan el mismo dispositivo, cada una ve lo suyo.
+- La cuenta y el progreso se guardan en la nube: se puede entrar desde cualquier computador o celular y encontrar todo igual. Cada persona solo ve lo suyo.
 
 ### Inicio
 
@@ -129,7 +129,7 @@ El botón "Volver" regresa a la pantalla desde donde se abrió Planes. El botón
 
 ## Qué falta o está simulado en esta versión
 
-- **Cuentas solo en el navegador.** El registro y los datos se guardan en el navegador donde se crearon. Si la persona entra desde otro dispositivo o borra los datos del navegador, no encuentra su cuenta ni su progreso. No hay recuperación de contraseña.
+- **No hay recuperación de contraseña** todavía.
 - **El asistente con IA solo funciona donde corre su servidor.** Por ahora ese servidor se usa en el computador de desarrollo; en la página publicada, el asistente usaría las respuestas predefinidas.
 - **Sin pagos:** nadie puede pasar al plan Pro todavía, y las plantillas Pro y la exportación están bloqueadas.
 - **Sin recordatorios ni notificaciones.**

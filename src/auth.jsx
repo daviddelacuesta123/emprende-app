@@ -1,88 +1,81 @@
-import { createContext, useCallback, useContext, useState } from 'react'
-import { LEGACY_KEY, storeKey } from './store'
+import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import { supabase } from './supabase'
 
-// Cuentas solo en este dispositivo: no hay backend todavía.
-const USERS = 'emprende:users'
-const SESSION = 'emprende:session'
+// Recuerda si en este navegador ya se creó o usó una cuenta, para abrir el acceso en "Iniciar sesión".
+const SEEN_KEY = 'emprende:ha-ingresado'
 
-const read = (key, fallback) => {
+const remember = () => {
   try {
-    const raw = localStorage.getItem(key)
-    return raw ? JSON.parse(raw) : fallback
-  } catch {
-    return fallback
-  }
-}
-
-const write = (key, value) => {
-  try {
-    if (value == null) localStorage.removeItem(key)
-    else localStorage.setItem(key, JSON.stringify(value))
+    localStorage.setItem(SEEN_KEY, '1')
   } catch {}
 }
 
-export const normalizeEmail = (email) => email.trim().toLowerCase()
-
-async function hash(email, password) {
-  const text = `${email}:${password}`
-  // crypto.subtle solo existe en contextos seguros (https o localhost).
-  if (globalThis.crypto?.subtle) {
-    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text))
-    return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('')
+const seen = () => {
+  try {
+    return !!localStorage.getItem(SEEN_KEY)
+  } catch {
+    return false
   }
-  let h = 5381
-  for (const c of text) h = Math.imul(h, 33) ^ c.charCodeAt(0)
-  return `djb2:${(h >>> 0).toString(16)}`
 }
 
-function seedUserData(email, name, isFirstUser) {
-  if (read(storeKey(email), null)) return
-  const legacy = isFirstUser ? read(LEGACY_KEY, null) : null
-  write(storeKey(email), legacy ? { ...legacy, name: legacy.name || name } : { name })
-  if (legacy) write(LEGACY_KEY, null)
+const MESSAGES = [
+  [/already.*registered|user_already_exists/i, 'Ya existe una cuenta con este correo. Inicia sesión.'],
+  [/invalid login credentials|invalid_credentials/i, 'Correo o contraseña incorrectos.'],
+  [/email not confirmed|email_not_confirmed/i, 'Confirma tu correo antes de iniciar sesión: revisa tu bandeja de entrada.'],
+  [/password should be|weak_password/i, 'La contraseña es muy débil. Usa al menos 6 caracteres.'],
+  [/rate limit|too many|over_request_rate_limit|over_email_send_rate_limit/i, 'Demasiados intentos. Espera unos minutos y vuelve a intentar.'],
+  [/invalid.*email|email_address_invalid/i, 'Ese correo no es válido.'],
+  [/fetch|network/i, 'No hay conexión. Revisa tu internet e intenta de nuevo.'],
+]
+
+const friendly = (error) => {
+  const text = `${error?.code ?? ''} ${error?.message ?? ''}`
+  for (const [re, msg] of MESSAGES) if (re.test(text)) return msg
+  return 'Algo salió mal. Intenta de nuevo.'
 }
 
 const Ctx = createContext(null)
 
 export function AuthProvider({ children }) {
-  const [users, setUsers] = useState(() => read(USERS, {}))
-  const [session, setSession] = useState(() => {
-    const s = read(SESSION, null)
-    return s && read(USERS, {})[s] ? s : null
-  })
+  const [authSession, setAuthSession] = useState(null)
+  const [ready, setReady] = useState(false)
 
-  const start = (email) => {
-    write(SESSION, email)
-    setSession(email)
-  }
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setAuthSession(data.session)
+      setReady(true)
+    })
+    const { data } = supabase.auth.onAuthStateChange((_event, s) => setAuthSession(s))
+    return () => data.subscription.unsubscribe()
+  }, [])
 
   const register = useCallback(async ({ name, email, password }) => {
-    const id = normalizeEmail(email)
-    const all = read(USERS, {})
-    if (all[id]) throw new Error('Ya existe una cuenta con este correo. Inicia sesión.')
-    const next = { ...all, [id]: { name: name.trim(), hash: await hash(id, password), createdAt: Date.now() } }
-    write(USERS, next)
-    setUsers(next)
-    seedUserData(id, name.trim(), Object.keys(all).length === 0)
-    start(id)
+    const { data, error } = await supabase.auth.signUp({
+      email: email.trim(),
+      password,
+      options: { data: { name: name.trim() } },
+    })
+    if (error) throw new Error(friendly(error))
+    remember()
+    // Si el proyecto pide confirmar el correo, Supabase no devuelve sesión hasta que se confirme.
+    return { needsConfirmation: !data.session }
   }, [])
 
   const login = useCallback(async ({ email, password }) => {
-    const id = normalizeEmail(email)
-    const user = read(USERS, {})[id]
-    if (!user || user.hash !== (await hash(id, password))) throw new Error('Correo o contraseña incorrectos.')
-    start(id)
+    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password })
+    if (error) throw new Error(friendly(error))
+    remember()
   }, [])
 
-  const logout = useCallback(() => {
-    write(SESSION, null)
-    setSession(null)
-  }, [])
+  const logout = useCallback(() => supabase.auth.signOut(), [])
 
+  if (!ready) return null
+
+  const u = authSession?.user
   const value = {
-    session,
-    user: session ? users[session] : null,
-    hasAccounts: Object.keys(users).length > 0,
+    session: u?.id ?? null,
+    user: u ? { id: u.id, email: u.email, name: u.user_metadata?.name ?? '', createdAt: u.created_at } : null,
+    hasAccounts: seen(),
     register,
     login,
     logout,

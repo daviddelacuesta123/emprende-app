@@ -33,7 +33,7 @@ function Row({ label, value, placeholder, onClick, last }) {
 
 export default function Account() {
   const { state, update } = useStore()
-  const { session, user, logout } = useAuth()
+  const { user, logout } = useAuth()
   const nav = useNavigate()
   const [editing, setEditing] = useState(null)
   const [draft, setDraft] = useState('')
@@ -63,7 +63,7 @@ export default function Account() {
         <Avatar name={state.name} size="size-16 text-[22px]" />
         <div className="flex min-w-0 flex-col gap-0.5">
           <h1 className="truncate text-[22px] font-bold">{state.name}</h1>
-          <span className="truncate text-[14px] text-mut">{session}</span>
+          <span className="truncate text-[14px] text-mut">{user?.email}</span>
           {since && <span className="text-[12px] text-sub">Miembro desde {since}</span>}
         </div>
       </div>
@@ -126,7 +126,7 @@ export default function Account() {
         <h2 className="text-[17px] font-semibold">Datos personales</h2>
         <Card className="overflow-hidden">
           <Row label="Nombre" value={state.name} onClick={() => openEdit('name')} />
-          <Row label="Correo electrónico" value={session} last />
+          <Row label="Correo electrónico" value={user?.email} last />
         </Card>
       </section>
 
