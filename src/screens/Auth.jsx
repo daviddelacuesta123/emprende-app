@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Navigate } from 'react-router'
+import { Link, Navigate, useLocation } from 'react-router'
 import { ArrowRight, Eye, EyeOff, Lock, Mail, User } from 'lucide-react'
 import { useAuth } from '../auth'
 import { APP_NAME, Button, Logo, Screen } from '../ui'
@@ -39,7 +39,8 @@ function Field({ Icon, label, hint, right, ...rest }) {
 
 export default function Auth() {
   const { session, hasAccounts, register, login } = useAuth()
-  const [mode, setMode] = useState(hasAccounts ? 'login' : 'register')
+  const requested = useLocation().state?.mode
+  const [mode, setMode] = useState(requested ?? (hasAccounts ? 'login' : 'register'))
   const [form, setForm] = useState({ name: '', email: '', password: '' })
   const [showPass, setShowPass] = useState(false)
   const [error, setError] = useState('')
@@ -76,10 +77,10 @@ export default function Auth() {
 
   return (
     <Screen bottom="none" className="gap-7">
-      <div className="flex items-center gap-2.5 pt-3">
+      <Link to="/conoce" className="flex items-center gap-2.5 self-start pt-3">
         <Logo size={34} />
         <span className="text-[17px] font-bold tracking-tight">{APP_NAME}</span>
-      </div>
+      </Link>
 
       <div className="flex flex-col gap-2">
         <h1 className="text-[28px] leading-tight font-bold">{copy.title}</h1>
