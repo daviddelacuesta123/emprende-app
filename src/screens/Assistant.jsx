@@ -17,17 +17,16 @@ export default function Assistant() {
   const endRef = useRef(null)
   const left = Math.max(0, AI_FREE_LIMIT - state.ai.used)
 
-  const send = (raw) => {
+  const send = async (raw) => {
     const q = raw.trim()
     if (!q || left === 0 || typing) return
     setText('')
-    update((s) => ({ chat: [...s.chat, { role: 'user', text: q }], ai: { ...s.ai, used: s.ai.used + 1 } }))
+    const nextChat = [...state.chat, { role: 'user', text: q }]
+    update((s) => ({ chat: nextChat, ai: { ...s.ai, used: s.ai.used + 1 } }))
     setTyping(true)
-    setTimeout(() => {
-      const r = reply(q)
-      update((s) => ({ chat: [...s.chat, { role: 'assistant', ...r }] }))
-      setTyping(false)
-    }, 700)
+    const r = await reply(nextChat)
+    update((s) => ({ chat: [...s.chat, { role: 'assistant', ...r }] }))
+    setTyping(false)
   }
 
   useEffect(() => {
