@@ -27,7 +27,7 @@ const toMessage = (m) => ({ role: m.rol, text: m.texto, ...(m.accion ? { action:
 async function loadState(userId) {
   const results = await Promise.all([
     supabase.from('perfiles').select('*').eq('id', userId).maybeSingle(),
-    supabase.from('actividades_completadas').select('actividad_id'),
+    supabase.from('actividades_completadas').select('actividad_id, completada_en'),
     supabase.from('costos').select('id, plantilla, concepto, valor, orden').order('orden'),
     supabase.from('plan_negocio').select('bloque, contenido'),
     supabase.from('mensajes_chat').select('rol, texto, accion').order('id'),
@@ -45,6 +45,7 @@ async function loadState(userId) {
     stage: perfil.etapa,
     onboarded: perfil.onboarded,
     done: Object.fromEntries(actividades.map((a) => [a.actividad_id, true])),
+    doneAt: Object.fromEntries(actividades.map((a) => [a.actividad_id, a.completada_en])),
     calc: { costs: toRows(costos, 'precio'), margin: perfil.margen_ganancia },
     budget: toRows(costos, 'presupuesto'),
     plan: Object.fromEntries(plan.map((b) => [b.bloque, b.contenido])),
@@ -211,6 +212,14 @@ export function StoreProvider({ userId, children }) {
   const update = useCallback((patch) => {
     const prev = stateRef.current
     const next = { ...prev, ...(typeof patch === 'function' ? patch(prev) : patch) }
+    if (next.done !== prev.done) {
+      const now = new Date().toISOString()
+      next.doneAt = Object.fromEntries(
+        Object.keys(next.done)
+          .filter((id) => next.done[id])
+          .map((id) => [id, prev.doneAt[id] ?? now]),
+      )
+    }
     stateRef.current = next
     setState(next)
     syncRef.current.sync(prev, next)
@@ -261,6 +270,22 @@ export const nextActivities = (done, k = 3) =>
   STEPS.flatMap((s) => s.activities.map((a) => ({ ...a, step: s })))
     .filter((a) => !done[a.id])
     .slice(0, k)
+
+const dayKey = (date) => new Date(date).toLocaleDateString('en-CA')
+
+// Días seguidos con al menos una actividad completada, contando hasta hoy o hasta ayer.
+export const streak = (doneAt) => {
+  const days = new Set(Object.values(doneAt).map(dayKey))
+  const day = new Date()
+  const today = days.has(dayKey(day))
+  if (!today) day.setDate(day.getDate() - 1)
+  let n = 0
+  while (days.has(dayKey(day))) {
+    n += 1
+    day.setDate(day.getDate() - 1)
+  }
+  return { days: n, today }
+}
 
 export const cop = (n) =>
   new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(

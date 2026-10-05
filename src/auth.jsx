@@ -25,8 +25,13 @@ const MESSAGES = [
   [/password should be|weak_password/i, 'La contraseña es muy débil. Usa al menos 6 caracteres.'],
   [/rate limit|too many|over_request_rate_limit|over_email_send_rate_limit/i, 'Demasiados intentos. Espera unos minutos y vuelve a intentar.'],
   [/invalid.*email|email_address_invalid/i, 'Ese correo no es válido.'],
+  [/same_password|should be different/i, 'La contraseña nueva debe ser distinta a la anterior.'],
+  [/not authorized/i, 'Por ahora no podemos enviar correos a esa dirección. Intenta más tarde.'],
+  [/provider is not enabled|unsupported provider/i, 'El acceso con Google todavía no está disponible.'],
   [/fetch|network/i, 'No hay conexión. Revisa tu internet e intenta de nuevo.'],
 ]
+
+export const GOOGLE_ENABLED = import.meta.env.VITE_AUTH_GOOGLE === 'true'
 
 const friendly = (error) => {
   const text = `${error?.code ?? ''} ${error?.message ?? ''}`
@@ -67,6 +72,34 @@ export function AuthProvider({ children }) {
     remember()
   }, [])
 
+  const loginWithGoogle = useCallback(async () => {
+    remember()
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin },
+    })
+    if (error) throw new Error(friendly(error))
+  }, [])
+
+  // Supabase responde igual exista o no la cuenta, para no revelar qué correos están registrados.
+  const recover = useCallback(async (email) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: `${window.location.origin}/nueva-contrasena`,
+    })
+    if (error) throw new Error(friendly(error))
+  }, [])
+
+  const updatePassword = useCallback(async (password) => {
+    const { error } = await supabase.auth.updateUser({ password })
+    if (error) throw new Error(friendly(error))
+  }, [])
+
+  const deleteAccount = useCallback(async () => {
+    const { error } = await supabase.rpc('eliminar_mi_cuenta')
+    if (error) throw new Error('No pudimos eliminar tu cuenta. Intenta de nuevo.')
+    await supabase.auth.signOut({ scope: 'local' })
+  }, [])
+
   const logout = useCallback(() => supabase.auth.signOut(), [])
 
   if (!ready) return null
@@ -78,6 +111,10 @@ export function AuthProvider({ children }) {
     hasAccounts: seen(),
     register,
     login,
+    loginWithGoogle,
+    recover,
+    updatePassword,
+    deleteAccount,
     logout,
   }
 

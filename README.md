@@ -50,20 +50,15 @@ npm run dev
 
 Durante el desarrollo, la página reenvía las llamadas a `/api` al servidor del asistente (ver `vite.config.js`). Si el servidor no está corriendo, el asistente usa las respuestas predefinidas sin mostrar error.
 
-**Cambiar el modelo o la configuración**
+El servidor **solo responde a usuarios con sesión**: la página le envía el token de Supabase y el servidor lo verifica. Además, descarta mensajes con rol `system`, usa solo los últimos 12 mensajes de la conversación y limita a 30 preguntas por hora a cada usuario.
 
-Por defecto el servidor usa `qwen2.5:3b` en `http://localhost:11434`.
+**Configuración**
 
-> **Importante:** `npm run server` todavía **no lee el archivo `.env`**, así que copiar `.env.example` a `.env` no tiene efecto por ahora. Mientras se corrige, arranca el servidor indicándole el archivo:
->
-> ```bash
-> cp .env.example .env          # y ajusta OLLAMA_MODEL al modelo que descargaste
-> node --env-file=.env server/index.js
-> ```
->
-> Ojo: `.env.example` trae `llama3.2:3b`, que es distinto al modelo por defecto del código.
+El servidor lee el mismo archivo `.env` que la página (necesita `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY` para verificar las sesiones). Si faltan, no arranca y lo indica. Usa Node 20.12 o más reciente.
 
-| Variable | Para qué sirve | Valor por defecto en el código |
+Ojo: `.env.example` trae `OLLAMA_MODEL=llama3.2:3b`. Si descargaste otro modelo, cámbialo ahí.
+
+| Variable | Para qué sirve | Valor si no está en `.env` |
 |---|---|---|
 | `LLM_PROVIDER` | Proveedor de IA | `ollama` |
 | `OLLAMA_URL` | Dirección de Ollama | `http://localhost:11434` |
@@ -81,14 +76,14 @@ El servidor no depende de un proveedor específico. Para agregar uno (Claude API
 ## Qué incluye esta versión
 
 - **Portada** en `/` para quien no ha iniciado sesión, con animaciones que muestran cómo funciona la app.
-- **Registro e inicio de sesión.** Cada cuenta guarda su propio progreso.
+- **Registro e inicio de sesión** con correo, recuperación de contraseña y, cuando se configure, con Google.
 - **Pantalla de carga**, solo para quien ya tiene sesión.
 - **Bienvenida:** nombre, emprendimiento y etapa. La ruta arranca según la etapa.
-- **Inicio:** progreso, siguiente paso, acceso rápido al asistente y tareas de la semana.
+- **Inicio:** progreso, racha de días seguidos, siguiente paso, acceso rápido al asistente y tareas de la semana.
 - **Ruta:** 6 pasos con actividades que se marcan como hechas.
 - **Asistente:** chat con IA local (Ollama) o respuestas predefinidas. 10 preguntas al mes en el plan gratis.
 - **Plantillas:** plan de negocio en 1 página, calculadora de precio, presupuesto inicial y guion de entrevista.
-- **Cuenta:** perfil, emprendimiento, plan actual y cierre de sesión.
+- **Cuenta:** perfil, emprendimiento, plan actual, cierre de sesión y eliminar la cuenta.
 - **Planes:** Gratis y Pro ($19.900 COP al mes). El pago todavía no está conectado.
 - **Computador:** menú lateral en lugar de la barra inferior; los paneles se abren como ventanas centradas y se cierran con Escape.
 
@@ -112,7 +107,28 @@ Reglas importantes:
 - **Cada usuario solo puede leer y modificar sus propias filas** (RLS en todas las tablas). Sin sesión no se puede leer nada.
 - **El plan (Gratis/Pro) no lo puede cambiar el usuario:** solo se cambia desde Supabase.
 - **El límite de 10 preguntas gratis lo aplica la base de datos:** la pregunta 11 del mes se rechaza al guardarla. Si cambias el límite, cámbialo en `AI_FREE_LIMIT` (`src/store.jsx`) y en `private.contar_pregunta()`.
-- **Confirmación de correo:** debe estar **desactivada** mientras prueban (Authentication → Sign In / Providers → Email → *Confirm email*). Si se activa, la app ya muestra el aviso de "revisa tu correo", pero el servicio de correo gratuito de Supabase solo envía unos pocos correos por hora.
+- **Confirmación de correo:** debe estar **desactivada** mientras prueban (Authentication → Sign In / Providers → Email → *Confirm email*). Si se activa, la app ya muestra el aviso de "revisa tu correo".
+- **Eliminar la cuenta:** la función `eliminar_mi_cuenta()` borra al usuario que la llama y, en cascada, todos sus datos. Está en `supabase/migrations/20261005150000_eliminar_cuenta.sql`.
+
+### Correos (recuperar contraseña)
+
+El servicio de correo gratuito de Supabase **solo envía correos a los miembros del equipo del proyecto** y muy pocos por hora. Para que "Olvidé mi contraseña" les llegue a todos los usuarios hay que configurar un servicio de correo propio (por ejemplo Resend o Brevo) en Authentication → Emails → SMTP Settings. Mientras tanto, la app muestra "Por ahora no podemos enviar correos a esa dirección".
+
+El enlace del correo lleva a `/nueva-contrasena`. Esa dirección tiene que estar permitida en **Authentication → URL Configuration**:
+
+- **Site URL:** la dirección de la página publicada (o `http://localhost:5173` mientras desarrollan).
+- **Redirect URLs:** agregar `http://localhost:5173/**` y, al publicar, `https://<tu-dominio>/**`.
+
+### Entrar con Google
+
+El botón "Continuar con Google" aparece solo si `VITE_AUTH_GOOGLE=true` en el `.env`. Antes de activarlo:
+
+1. En [Google Cloud Console](https://console.cloud.google.com/) crea un proyecto y, en **APIs y servicios → Credenciales**, un **ID de cliente de OAuth** de tipo *Aplicación web*.
+2. En **URIs de redireccionamiento autorizados** agrega `https://cnsomjvdcvkplgxvnywf.supabase.co/auth/v1/callback`.
+3. En Supabase, **Authentication → Sign In / Providers → Google**: actívalo y pega el *Client ID* y el *Client Secret*.
+4. Pon `VITE_AUTH_GOOGLE=true` en el `.env` (y en Vercel al publicar).
+
+Las cuentas de Google toman el nombre de la cuenta de Google para el perfil.
 
 Los cambios a la base de datos están en `supabase/migrations/`, en el orden en que se aplicaron. Cualquier cambio nuevo debe ir en un archivo nuevo ahí.
 
@@ -143,7 +159,8 @@ src/                          # Página (React + Vite + Tailwind)
   screens/                    # Una pantalla por archivo
     Landing.jsx               # Portada
     Splash.jsx                # Pantalla de carga
-    Auth.jsx                  # Registro e inicio de sesión
+    Auth.jsx                  # Registro, inicio de sesión y recuperar contraseña
+    NewPassword.jsx           # Crear una contraseña nueva (desde el enlace del correo)
     Onboarding.jsx            # Bienvenida
     Home.jsx, RouteList.jsx, StepDetail.jsx, Assistant.jsx,
     Templates.jsx, TemplateDetail.jsx, Account.jsx, Plans.jsx
@@ -167,19 +184,17 @@ vercel.json, public/_redirects  # Reglas de publicación
 
 ## Problemas conocidos
 
-- **El servidor del asistente no lee `.env`** (ver arriba).
 - **Las respuestas de la IA se muestran como texto plano:** si el modelo usa negritas o listas, se ven los asteriscos.
 - **No hay tiempo límite de espera:** si la IA se cuelga, el chat se queda en "Escribiendo…".
 - **Si la IA falla, el usuario no se entera:** recibe una respuesta predefinida y la pregunta igual se descuenta.
-- **Se envía la conversación completa en cada pregunta**, lo que vuelve lento a un modelo pequeño en chats largos.
-- **El servidor del asistente acepta mensajes con rol `system`** desde la página, y no pide sesión ni tiene límite propio: el límite de 10 preguntas se aplica al guardar el mensaje en Supabase, pero alguien podría llamar a `/api/chat` directamente.
-- **Recuperación de contraseña:** todavía no hay pantalla para "Olvidé mi contraseña".
+- **El límite de 30 preguntas por hora del servidor se guarda en memoria:** se reinicia si el servidor se reinicia. El límite del plan gratis sí es permanente, porque lo aplica Supabase.
+- **Los correos de recuperación solo llegan al equipo** hasta configurar un servicio de correo propio (ver "Correos").
 
 ## Siguientes pasos
 
 1. **Publicar la página** en Vercel (la configuración ya está lista; hay que agregar las variables `VITE_SUPABASE_*` en Vercel).
-2. **Recuperar contraseña** y, opcionalmente, **entrar con Google**.
-3. **Política de privacidad, términos y opción de borrar la cuenta** (Ley 1581 de 2012).
-4. **Publicar el servidor del asistente** (Railway, Fly.io, etc.) o pasar a una IA en la nube, pidiendo la sesión de Supabase en cada pregunta.
+2. **Servicio de correo propio** para la recuperación de contraseña, y **configurar Google** (ver arriba).
+3. **Política de privacidad y términos** (Ley 1581 de 2012).
+4. **Publicar el servidor del asistente** (Railway, Fly.io, etc.) o pasar a una IA en la nube.
 5. **Pagos** para el plan Pro (Wompi o Mercado Pago) y construir lo que promete: exportar, recordatorios y plantillas Pro.
 6. Fase 2 según la encuesta: dashboard de métricas y comunidad con mentores.
