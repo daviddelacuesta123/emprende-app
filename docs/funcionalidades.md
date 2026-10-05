@@ -1,6 +1,6 @@
 # EmprendiApp: qué hace la aplicación
 
-EmprendiApp acompaña a jóvenes que quieren emprender, o que ya tienen un negocio pequeño, a avanzar paso a paso: de la idea a sus primeros clientes. Está pensada para usarse en el celular y en 15 minutos al día.
+EmprendiApp acompaña a jóvenes que quieren emprender, o que ya tienen un negocio pequeño, a avanzar paso a paso: de la idea a sus primeros clientes. Es una página web que funciona en computador y en celular, pensada para usarse 15 minutos al día.
 
 Tiene tres herramientas principales, que salen de lo que más pidieron las 40 personas encuestadas (ver [mvp.md](mvp.md)):
 
@@ -10,24 +10,39 @@ Tiene tres herramientas principales, que salen de lo que más pidieron las 40 pe
 
 ## Recorrido de un usuario nuevo
 
-1. **Pantalla de carga.** Al abrir la app aparece el logo y el nombre de EmprendiApp durante un par de segundos.
-2. **Registro.** La persona crea su cuenta con nombre, correo y contraseña. Si ya tiene cuenta, inicia sesión.
+1. **Portada.** Quien entra por primera vez ve una página que explica qué es EmprendiApp, con botones para crear una cuenta o iniciar sesión.
+2. **Registro.** Crea su cuenta con nombre, correo y contraseña.
 3. **Bienvenida.** Escribe su nombre, el de su emprendimiento (opcional) y elige en qué punto está:
    - *Quiero emprender pero no sé por dónde empezar:* la ruta empieza en el paso 1.
    - *Ya tengo una idea:* se da por hecho el paso 1 y empieza en el paso 2.
    - *Ya tengo un negocio en marcha:* se dan por hechos los pasos 1 y 2 y empieza en el paso 3.
-4. **Inicio.** Desde aquí usa la app con la barra inferior de 5 pestañas.
+4. **Inicio.** Desde aquí usa la app. En celular navega con la barra inferior; en computador, con el menú lateral.
+
+Cuando vuelve más adelante con su sesión abierta, ve primero una pantalla de carga con el logo y luego su Inicio.
 
 ## Pantallas
 
+### Portada
+
+Es lo primero que ve quien no ha iniciado sesión.
+
+- **Encabezado** con el logo y los botones "Iniciar sesión" y "Crear cuenta".
+- **Inicio de la página:** "De la idea a tu primera venta, paso a paso.", con el botón "Crear mi cuenta gratis" y los 6 pasos de la ruta, que se van marcando uno a uno hasta llegar a "Tu primera venta".
+- **El problema:** la frase "No sé por dónde empezar." y los resultados de la encuesta (78 % pidió guías paso a paso, 60 % un asistente y 58 % plantillas), con barras que crecen al llegar a esa parte.
+- **Qué hace la app,** con tres muestras animadas: actividades que se marcan como hechas, una conversación con el asistente sobre el RUT y la calculadora llegando al precio sugerido.
+- **Planes** Gratis y Pro, y un cierre con el botón "Empezar mi ruta".
+
+Las secciones aparecen suavemente a medida que se baja por la página. Si la persona tiene activada en su dispositivo la opción de **reducir movimiento**, todo se muestra sin animaciones.
+
 ### Acceso (registro e inicio de sesión)
 
-- Selector entre **Registro** e **Iniciar sesión**.
+- Selector entre **Registro** e **Iniciar sesión**. Abre en una u otra según el botón que se tocó en la portada.
 - Registro: nombre, correo y contraseña de mínimo 6 caracteres.
 - Inicio de sesión: correo y contraseña.
 - Se puede mostrar u ocultar la contraseña.
 - Mensajes claros si el correo ya está registrado o si los datos no coinciden.
-- Cada cuenta guarda su propio progreso: si dos personas usan el mismo celular, cada una ve lo suyo.
+- El logo lleva de vuelta a la portada.
+- Cada cuenta guarda su propio progreso: si dos personas usan el mismo dispositivo, cada una ve lo suyo.
 
 ### Inicio
 
@@ -58,14 +73,16 @@ Al entrar a un paso se ve:
 
 Cada actividad se abre en un panel con su explicación. Desde ahí se marca como hecha o se va directo a la plantilla o al asistente con la pregunta ya escrita. Al terminar todas, el botón lleva al siguiente paso.
 
-### Asistente (botón central de la barra)
+### Asistente
+
+En celular es el botón destacado en el centro de la barra inferior.
 
 - Chat para preguntar sobre el negocio, con sugerencias para empezar.
-- Cada respuesta trae un botón que lleva a la parte de la app relacionada, por ejemplo "Abrir calculadora" o "Ver paso de trámites".
-- Temas que reconoce: RUT y DIAN, Cámara de Comercio y trámites, precios y costos, financiación (Fondo Emprender, iNNpulsa), redes y marketing, clientes y ventas, validación, plan de negocio, cómo empezar y organización del tiempo.
-- **Plan gratis:** 10 preguntas al mes. Al agotarlas, invita a pasarse a Pro.
-
-> Por ahora el asistente usa respuestas predefinidas según palabras clave. Todavía no está conectado a un modelo de IA real.
+- **Puede funcionar de dos formas:**
+  - **Con inteligencia artificial**, cuando está conectado al servidor del asistente. Responde de forma breve y práctica, pensando en emprendedores jóvenes en Colombia, y tiene en cuenta lo que se ha hablado antes en la conversación.
+  - **Con respuestas predefinidas**, si el servidor no está disponible. Reconoce temas como RUT y DIAN, Cámara de Comercio, precios, financiación, redes, clientes, validación, plan de negocio, cómo empezar y organización del tiempo. Estas respuestas traen un botón que lleva a la parte de la app relacionada, por ejemplo "Abrir calculadora".
+- **Plan gratis:** 10 preguntas al mes. Debajo del chat se ve cuántas quedan ("Te quedan 7 de 10 preguntas gratis este mes"). Al agotarlas, invita a pasarse a Pro.
+- Al desplazarse por la conversación, los mensajes se desvanecen al llegar a la caja de texto.
 
 ### Plantillas
 
@@ -84,11 +101,11 @@ Exportar a PDF o Excel está marcado como función Pro.
 
 ### Cuenta
 
-- Foto de perfil con las iniciales, nombre, correo y fecha desde la que es miembro.
+- Iniciales, nombre, correo y fecha desde la que es miembro.
 - **Tu emprendimiento:** nombre del negocio (editable), etapa elegida en la bienvenida y progreso de la ruta.
-- **Tu plan:** plan actual y cuántas preguntas al asistente lleva en el mes, con un botón para mejorar a Pro.
+- **Tu plan:** plan actual y cuántas preguntas al asistente le quedan en el mes, con un botón para mejorar a Pro.
 - **Datos personales:** nombre (editable) y correo.
-- **Cerrar sesión**, con confirmación antes de salir.
+- **Cerrar sesión**, con confirmación antes de salir. Al cerrar sesión se vuelve a la portada.
 
 ### Planes
 
@@ -101,13 +118,21 @@ Exportar a PDF o Excel está marcado como función Pro.
 | Exportar a PDF y Excel | No | Sí |
 | Recordatorios y tareas semanales | No | Sí |
 
-El botón "Probar 7 días gratis" muestra un aviso: los pagos todavía no están activos.
+El botón "Volver" regresa a la pantalla desde donde se abrió Planes. El botón "Probar 7 días gratis" muestra un aviso: los pagos todavía no están activos.
+
+## En computador
+
+- Un **menú lateral** fijo con el logo y las cinco secciones reemplaza la barra inferior.
+- El contenido se muestra en una columna central más ancha, y las plantillas en tres columnas.
+- Los paneles (actividades, editar nombre, cerrar sesión) se abren como ventanas centradas y se cierran con la tecla **Escape**.
+- La portada, el acceso y la bienvenida se ven igual en computador y en celular, adaptados al ancho de la pantalla.
 
 ## Qué falta o está simulado en esta versión
 
-- **Cuentas solo en el dispositivo.** El registro y los datos se guardan en el navegador. Si la persona cambia de celular o borra los datos del navegador, pierde su cuenta y su progreso. No hay recuperación de contraseña.
-- **Asistente sin IA real:** responde con textos predefinidos.
+- **Cuentas solo en el navegador.** El registro y los datos se guardan en el navegador donde se crearon. Si la persona entra desde otro dispositivo o borra los datos del navegador, no encuentra su cuenta ni su progreso. No hay recuperación de contraseña.
+- **El asistente con IA solo funciona donde corre su servidor.** Por ahora ese servidor se usa en el computador de desarrollo; en la página publicada, el asistente usaría las respuestas predefinidas.
 - **Sin pagos:** nadie puede pasar al plan Pro todavía, y las plantillas Pro y la exportación están bloqueadas.
 - **Sin recordatorios ni notificaciones.**
+- **No se puede borrar la cuenta, cambiar la etapa ni borrar el historial del chat.**
 
 Los siguientes pasos para cubrir esto están en el [README](../README.md#siguientes-pasos).
