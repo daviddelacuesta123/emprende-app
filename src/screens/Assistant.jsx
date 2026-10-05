@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
 import { ArrowUp, Sparkles } from 'lucide-react'
 import { reply } from '../assistant'
-import { AI_FREE_LIMIT, useStore } from '../store'
+import { AI_FREE_LIMIT, aiLeft, useStore } from '../store'
 import { Screen } from '../ui'
 
 const SUGGESTIONS = ['¿Por dónde empiezo?', '¿Cómo saco el RUT?', '¿Cuánto debo cobrar?', '¿Cómo consigo mis primeros clientes?']
@@ -15,7 +15,7 @@ export default function Assistant() {
   const [typing, setTyping] = useState(false)
   const handled = useRef(false)
   const endRef = useRef(null)
-  const left = Math.max(0, AI_FREE_LIMIT - state.ai.used)
+  const left = aiLeft(state.ai)
 
   const send = async (raw) => {
     const q = raw.trim()
@@ -114,7 +114,7 @@ export default function Assistant() {
           </form>
         )}
         <p className="text-center text-xs text-mut">
-          Gratis: {left} de {AI_FREE_LIMIT} preguntas este mes · Pro: ilimitadas
+          Te quedan {left} de {AI_FREE_LIMIT} preguntas gratis este mes · Pro: ilimitadas
         </p>
       </div>
     </Screen>
