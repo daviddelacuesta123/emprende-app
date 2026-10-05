@@ -7,6 +7,8 @@ import { AI_FREE_LIMIT, aiLeft, currentStepIndex, useStore } from '../store'
 import { Avatar, Button, Card, ProgressBar, Screen, Sheet } from '../ui'
 import { STAGES } from './Onboarding'
 
+const DELETE_WORD = 'ELIMINAR'
+
 const FIELDS = {
   name: { label: 'Tu nombre', placeholder: 'Tu nombre', required: true },
   business: { label: 'Nombre de tu emprendimiento', placeholder: 'Ej: Dulces de la Abuela', required: false },
@@ -33,7 +35,29 @@ function Row({ label, value, placeholder, onClick, last }) {
 
 export default function Account() {
   const { state, update } = useStore()
-  const { user, logout } = useAuth()
+  const { user, logout, deleteAccount } = useAuth()
+  const [deleting, setDeleting] = useState(false)
+  const [deleteText, setDeleteText] = useState('')
+  const [deleteError, setDeleteError] = useState('')
+  const [deleteBusy, setDeleteBusy] = useState(false)
+
+  const closeDelete = () => {
+    setDeleting(false)
+    setDeleteText('')
+    setDeleteError('')
+  }
+
+  const confirmDelete = async (e) => {
+    e.preventDefault()
+    if (deleteText.trim().toUpperCase() !== DELETE_WORD || deleteBusy) return
+    setDeleteBusy(true)
+    try {
+      await deleteAccount()
+    } catch (err) {
+      setDeleteError(err.message)
+      setDeleteBusy(false)
+    }
+  }
   const nav = useNavigate()
   const [editing, setEditing] = useState(null)
   const [draft, setDraft] = useState('')
@@ -134,7 +158,14 @@ export default function Account() {
         <Button variant="danger-outline" onClick={() => setConfirmLogout(true)}>
           <LogOut size={18} strokeWidth={1.8} /> Cerrar sesión
         </Button>
-        <p className="text-center text-[12px] text-sub">Tu progreso se guarda en este dispositivo.</p>
+        <p className="text-center text-[12px] text-sub">Tu progreso queda guardado en tu cuenta.</p>
+        <button
+          type="button"
+          onClick={() => setDeleting(true)}
+          className="mt-3 self-center text-[13px] font-medium text-mut underline underline-offset-2 hover:text-red-600"
+        >
+          Eliminar mi cuenta
+        </button>
       </div>
 
       <Sheet open={!!editing} onClose={() => setEditing(null)}>
@@ -177,6 +208,46 @@ export default function Account() {
             </Button>
           </div>
         </div>
+      </Sheet>
+
+      <Sheet open={deleting} onClose={closeDelete}>
+        <form onSubmit={confirmDelete} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[17px] font-semibold">¿Eliminar tu cuenta?</span>
+            <span className="text-[14px] text-mut">
+              Se borran para siempre tu cuenta, tu progreso en la ruta, tus plantillas y tus conversaciones con el asistente. No
+              se puede deshacer.
+            </span>
+          </div>
+          <label className="flex flex-col gap-1.5">
+            <span className="text-[13px] font-medium text-mut">
+              Para confirmar, escribe <strong className="text-ink">{DELETE_WORD}</strong>
+            </span>
+            <input
+              value={deleteText}
+              onChange={(e) => {
+                setDeleteText(e.target.value)
+                setDeleteError('')
+              }}
+              autoCapitalize="characters"
+              autoComplete="off"
+              className="rounded-[10px] border border-line bg-white px-4 py-3 text-[15px] outline-none focus:border-red-600"
+            />
+          </label>
+          {deleteError && (
+            <p role="alert" className="rounded-[10px] bg-red-50 px-3.5 py-2.5 text-[13px] font-medium text-red-700">
+              {deleteError}
+            </p>
+          )}
+          <div className="grid grid-cols-2 gap-2.5">
+            <Button type="button" variant="secondary" onClick={closeDelete}>
+              Cancelar
+            </Button>
+            <Button type="submit" variant="danger" disabled={deleteText.trim().toUpperCase() !== DELETE_WORD || deleteBusy}>
+              Eliminar cuenta
+            </Button>
+          </div>
+        </form>
       </Sheet>
     </Screen>
   )

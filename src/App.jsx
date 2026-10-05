@@ -15,6 +15,7 @@ import TemplateDetail from './screens/TemplateDetail'
 import Plans from './screens/Plans'
 import Account from './screens/Account'
 import Landing from './screens/Landing'
+import NewPassword from './screens/NewPassword'
 
 function RequireAuth() {
   const { session } = useAuth()
@@ -76,6 +77,7 @@ export default function App() {
             <Route path="/conoce" element={<Navigate to="/" replace />} />
             <Route element={<CenteredLayout />}>
               <Route path="/acceso" element={<Auth />} />
+              <Route path="/nueva-contrasena" element={<NewPassword />} />
             </Route>
             <Route element={<RequireAuth />}>
               <Route element={<CenteredLayout />}>

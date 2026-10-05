@@ -40,6 +40,8 @@ Las secciones aparecen suavemente a medida que se baja por la página. Si la per
 - Registro: nombre, correo y contraseña de mínimo 6 caracteres.
 - Inicio de sesión: correo y contraseña.
 - Se puede mostrar u ocultar la contraseña.
+- **¿Olvidaste tu contraseña?:** se escribe el correo y llega un enlace para crear una contraseña nueva. Si el enlace venció, la app lo explica y permite pedir otro.
+- **Continuar con Google**, cuando esté activado.
 - Mensajes claros si el correo ya está registrado o si los datos no coinciden.
 - El logo lleva de vuelta a la portada.
 - La cuenta y el progreso se guardan en la nube: se puede entrar desde cualquier computador o celular y encontrar todo igual. Cada persona solo ve lo suyo.
@@ -47,6 +49,7 @@ Las secciones aparecen suavemente a medida que se baja por la página. Si la per
 ### Inicio
 
 - Saludo con el nombre y un mensaje según el avance ("Vas muy bien. Hoy toca: …").
+- **Racha:** cuántos días seguidos lleva completando al menos una actividad ("Llevas 3 días seguidos avanzando."). Si ayer avanzó pero hoy todavía no, invita a completar una actividad para no perder la racha.
 - Tarjeta con el progreso de la ruta, el siguiente paso y un botón para continuar.
 - Caja para hacerle una pregunta al asistente, con preguntas rápidas como "¿Cómo saco el RUT?".
 - **Tareas de esta semana:** las 3 siguientes actividades pendientes, que se pueden marcar como hechas desde ahí mismo.
@@ -106,6 +109,7 @@ Exportar a PDF o Excel está marcado como función Pro.
 - **Tu plan:** plan actual y cuántas preguntas al asistente le quedan en el mes, con un botón para mejorar a Pro.
 - **Datos personales:** nombre (editable) y correo.
 - **Cerrar sesión**, con confirmación antes de salir. Al cerrar sesión se vuelve a la portada.
+- **Eliminar mi cuenta:** borra para siempre la cuenta y todos sus datos (progreso, plantillas y conversaciones). Para confirmar hay que escribir ELIMINAR.
 
 ### Planes
 
@@ -129,10 +133,11 @@ El botón "Volver" regresa a la pantalla desde donde se abrió Planes. El botón
 
 ## Qué falta o está simulado en esta versión
 
-- **No hay recuperación de contraseña** todavía.
+- **Los correos para recuperar la contraseña todavía solo le llegan al equipo** del proyecto; falta conectar un servicio de correo propio.
+- **Entrar con Google** está listo en la app, pero falta activarlo en Supabase.
 - **El asistente con IA solo funciona donde corre su servidor.** Por ahora ese servidor se usa en el computador de desarrollo; en la página publicada, el asistente usaría las respuestas predefinidas.
 - **Sin pagos:** nadie puede pasar al plan Pro todavía, y las plantillas Pro y la exportación están bloqueadas.
 - **Sin recordatorios ni notificaciones.**
-- **No se puede borrar la cuenta, cambiar la etapa ni borrar el historial del chat.**
+- **No se puede cambiar la etapa ni borrar el historial del chat.**
 
 Los siguientes pasos para cubrir esto están en el [README](../README.md#siguientes-pasos).

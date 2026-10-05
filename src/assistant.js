@@ -1,3 +1,5 @@
+import { supabase } from './supabase'
+
 // Respuestas locales de respaldo cuando el backend no está disponible.
 const RULES = [
   [
@@ -65,9 +67,12 @@ function localReply(question) {
 // Llama al backend. Recibe el historial completo de mensajes { role, text }.
 export async function reply(messages) {
   try {
+    const { data } = await supabase.auth.getSession()
+    const token = data.session?.access_token
+    if (!token) throw new Error('Sin sesión')
     const res = await fetch('/api/chat', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({
         messages: messages.map((m) => ({ role: m.role, content: m.text })),
       }),

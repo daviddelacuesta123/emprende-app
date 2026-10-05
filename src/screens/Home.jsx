@@ -1,11 +1,18 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
-import { ArrowRight, Check, Sparkles } from 'lucide-react'
+import { ArrowRight, Check, Flame, Sparkles } from 'lucide-react'
 import { STEPS } from '../data'
-import { currentStepIndex, nextActivities, useStore } from '../store'
+import { currentStepIndex, nextActivities, streak, useStore } from '../store'
 import { Button, Card, ProgressBar, Screen } from '../ui'
 
 const QUICK = ['¿Cómo saco el RUT?', '¿Cuánto cobrar?']
+
+const streakText = ({ days, today }) => {
+  const dias = days === 1 ? '1 día' : `${days} días seguidos`
+  if (!today) return `Llevas ${dias}. Completa una actividad hoy para no perder tu racha.`
+  if (days === 1) return 'Avanzaste hoy. Vuelve mañana para empezar tu racha.'
+  return `Llevas ${dias} avanzando.`
+}
 
 export default function Home() {
   const { state, update } = useStore()
@@ -15,6 +22,7 @@ export default function Home() {
   const step = STEPS[ci]
   const tasks = nextActivities(state.done, 3)
   const started = Object.keys(state.done).length > 0
+  const racha = streak(state.doneAt)
 
   const ask = (text) => text.trim() && nav('/asistente', { state: { q: text.trim() } })
   const toggle = (id) => update((s) => ({ done: { ...s.done, [id]: !s.done[id] } }))
@@ -26,6 +34,14 @@ export default function Home() {
         <p className="text-[15px] text-mut">
           {step ? (started ? `Vas muy bien. Hoy toca: ${step.title.toLowerCase()}.` : 'Empecemos por lo primero.') : 'Completaste toda la ruta.'}
         </p>
+        {racha.days > 0 && (
+          <p
+            className={`mt-2 flex items-center gap-2 self-start rounded-full px-3 py-1.5 text-[13px] font-medium ${racha.today ? 'bg-pri text-white' : 'border border-line bg-white text-ink'}`}
+          >
+            <Flame size={16} strokeWidth={2} className={racha.today ? 'text-acc' : 'text-pri'} />
+            {streakText(racha)}
+          </p>
+        )}
       </div>
 
       <div className="flex flex-col gap-3 rounded-xl bg-pri p-4 text-white">
