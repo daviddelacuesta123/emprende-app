@@ -14,7 +14,7 @@ export default function Plans() {
   const [notice, setNotice] = useState(false)
   return (
     <Screen bottom="none" className="gap-[18px]">
-      <BackHeader to="/" label="Inicio" />
+      <BackHeader to="/" label="Volver" back />
       <div className="flex flex-col gap-1.5">
         <h1 className="text-[26px] font-bold">Elige tu plan</h1>
         <p className="text-[15px] text-mut">Empieza gratis. Pásate a Pro cuando tu negocio lo necesite.</p>

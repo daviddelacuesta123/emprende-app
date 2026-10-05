@@ -146,7 +146,7 @@ export default function Landing() {
   return (
     <div className="min-h-dvh bg-bg text-ink">
       <header className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4 sm:px-8 sm:py-5">
-        <Link to="/conoce" className="flex items-center gap-2.5">
+        <Link to="/" className="flex items-center gap-2.5">
           <Logo size={32} />
           <span className="font-display text-lg font-extrabold tracking-tight">{APP_NAME}</span>
         </Link>

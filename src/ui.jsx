@@ -1,4 +1,5 @@
-import { NavLink, useNavigate } from 'react-router'
+import { useEffect } from 'react'
+import { NavLink, useLocation, useNavigate } from 'react-router'
 import { ArrowLeft, CircleUser, FileText, House, Route, Sparkles } from 'lucide-react'
 
 export const APP_NAME = 'EmprendiApp'
@@ -38,11 +39,14 @@ export function Screen({ children, className = '', bottom = 'tabs' }) {
   )
 }
 
-export function BackHeader({ to, label, right }) {
+// Con `back`, regresa a la pantalla anterior; `to` solo se usa si se entró directo por el enlace.
+export function BackHeader({ to, label, right, back = false }) {
   const nav = useNavigate()
+  const { key } = useLocation()
+  const goBack = () => (back && key !== 'default' ? nav(-1) : nav(to))
   return (
     <div className="flex items-center justify-between">
-      <button onClick={() => nav(to)} className="-ml-1 flex items-center gap-1.5 p-1 text-[15px] font-medium">
+      <button onClick={goBack} className="-ml-1 flex items-center gap-1.5 p-1 text-[15px] font-medium">
         <ArrowLeft size={20} strokeWidth={1.8} />
         {label}
       </button>
@@ -165,6 +169,13 @@ export function ProgressBar({ value, className = '', track = 'bg-acc', bar = 'bg
 }
 
 export function Sheet({ open, onClose, children }) {
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e) => e.key === 'Escape' && onClose()
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [open, onClose])
+
   if (!open) return null
   return (
     <div className="fixed inset-0 z-30 flex items-end justify-center bg-black/30 md:items-center" onClick={onClose}>
