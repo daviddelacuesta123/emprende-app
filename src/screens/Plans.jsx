@@ -1,6 +1,5 @@
-import { useState } from 'react'
 import { Check, X } from 'lucide-react'
-import { BackHeader, Button, Screen } from '../ui'
+import { BackHeader, Screen } from '../ui'
 
 const FREE = [
   ['Ruta completa paso a paso', true],
@@ -11,7 +10,6 @@ const FREE = [
 const PRO = ['Todo lo del plan Gratis', 'Asistente IA ilimitado', 'Todas las plantillas + exportar', 'Recordatorios y tareas semanales']
 
 export default function Plans() {
-  const [notice, setNotice] = useState(false)
   return (
     <Screen bottom="none" className="gap-[18px]">
       <BackHeader to="/" label="Volver" back />
@@ -33,7 +31,7 @@ export default function Plans() {
       <div className="flex flex-col gap-3 rounded-xl bg-pri p-[18px] text-white">
         <span className="flex items-center justify-between">
           <span className="text-lg font-bold">Pro</span>
-          <span className="rounded-full bg-acc px-2.5 py-1 text-xs font-semibold text-ink">Recomendado</span>
+          <span className="rounded-full bg-white/12 px-2.5 py-1 text-xs font-semibold text-acc">Próximamente</span>
         </span>
         <span className="flex items-baseline gap-1.5">
           <span className="text-[30px] font-bold">$19.900</span>
@@ -44,10 +42,7 @@ export default function Plans() {
             <Check size={18} className="text-acc" /> {f}
           </span>
         ))}
-        <Button variant="light" onClick={() => setNotice(true)}>
-          Probar 7 días gratis
-        </Button>
-        {notice && <p className="text-center text-[13px] text-sub">Los pagos se activan en la próxima versión. ¡Gracias por tu interés!</p>}
+        <p className="pt-1 text-[13px] text-sub">El pago todavía no está disponible. Por ahora todas las cuentas empiezan en Gratis.</p>
       </div>
     </Screen>
   )

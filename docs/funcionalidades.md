@@ -122,7 +122,7 @@ Exportar a PDF o Excel está marcado como función Pro.
 | Exportar a PDF y Excel | No | Sí |
 | Recordatorios y tareas semanales | No | Sí |
 
-El botón "Volver" regresa a la pantalla desde donde se abrió Planes. El botón "Probar 7 días gratis" muestra un aviso: los pagos todavía no están activos.
+El botón "Volver" regresa a la pantalla desde donde se abrió Planes. Pro aparece como "Próximamente", con el aviso de que el pago todavía no está disponible y que por ahora todas las cuentas empiezan en Gratis.
 
 ## En computador
 
