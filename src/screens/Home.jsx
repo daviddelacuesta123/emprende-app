@@ -104,7 +104,7 @@ export default function Home() {
           </form>
           <div className="flex flex-wrap gap-2">
             {QUICK.map((t) => (
-              <button key={t} onClick={() => ask(t)} className="rounded-full bg-soft px-3 py-1.5 text-[13px] font-medium">
+              <button key={t} onClick={() => ask(t)} className="rounded-full bg-soft px-3 py-1.5 text-[13px] font-medium transition hover:bg-acc active:scale-[0.97]">
                 {t}
               </button>
             ))}
@@ -122,7 +122,7 @@ export default function Home() {
           </div>
           <Card className="flex flex-col gap-3 p-4">
             {tasks.map((t) => (
-              <label key={t.id} className="flex cursor-pointer items-center gap-3">
+              <label key={t.id} className="group -mx-2 flex cursor-pointer items-center gap-3 rounded-[10px] px-2 py-1 transition-colors hover:bg-soft">
                 <input type="checkbox" className="peer sr-only" checked={!!state.done[t.id]} onChange={() => toggle(t.id)} />
                 <span className="flex size-[22px] shrink-0 items-center justify-center rounded-[5px] border-[1.5px] border-sub/70 peer-checked:border-pri peer-checked:bg-pri">
                   {state.done[t.id] && <Check size={14} className="text-white" strokeWidth={2.5} />}

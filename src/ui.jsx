@@ -46,7 +46,7 @@ export function BackHeader({ to, label, right, back = false }) {
   const goBack = () => (back && key !== 'default' ? nav(-1) : nav(to))
   return (
     <div className="flex items-center justify-between">
-      <button onClick={goBack} className="-ml-1 flex items-center gap-1.5 p-1 text-[15px] font-medium">
+      <button onClick={goBack} className="-ml-1 flex items-center gap-1.5 rounded-[10px] p-1 pr-2 text-[15px] font-medium transition-colors hover:bg-soft">
         <ArrowLeft size={20} strokeWidth={1.8} />
         {label}
       </button>
@@ -64,16 +64,18 @@ export function Card({ children, className = '', as: As = 'div', ...rest }) {
 }
 
 export function Button({ children, variant = 'primary', className = '', ...rest }) {
+  // `enabled:` evita que un botón deshabilitado reaccione al mouse.
   const styles = {
-    primary: 'bg-pri text-white',
-    secondary: 'border border-line bg-white text-ink',
-    light: 'bg-acc text-ink',
-    danger: 'bg-red-600 text-white',
-    'danger-outline': 'border border-line bg-white text-red-600',
+    primary:
+      'bg-pri text-white focus-visible:outline-pri enabled:hover:-translate-y-px enabled:hover:shadow-[0_10px_24px_-10px_rgb(15_23_42/0.55)] motion-reduce:enabled:hover:translate-y-0',
+    secondary: 'border border-line bg-white text-ink focus-visible:outline-pri enabled:hover:bg-soft',
+    light: 'bg-acc text-ink focus-visible:outline-white enabled:hover:bg-white',
+    danger: 'bg-red-600 text-white focus-visible:outline-red-600 enabled:hover:bg-red-700',
+    'danger-outline': 'border border-line bg-white text-red-600 focus-visible:outline-red-600 enabled:hover:bg-red-50',
   }
   return (
     <button
-      className={`flex items-center justify-center gap-2 rounded-[10px] px-5 py-3.5 text-[15px] font-semibold transition active:scale-[0.98] disabled:opacity-40 ${styles[variant]} ${className}`}
+      className={`flex items-center justify-center gap-2 rounded-[10px] px-5 py-3.5 text-[15px] font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-[0.98] disabled:opacity-40 ${styles[variant]} ${className}`}
       {...rest}
     >
       {children}
@@ -134,7 +136,7 @@ export function TabBar() {
           to={to}
           end={to === '/'}
           className={({ isActive }) =>
-            `flex flex-col items-center gap-1 text-[11px] ${isActive ? 'font-semibold text-pri' : 'font-medium text-mut'}`
+            `flex flex-col items-center gap-1 text-[11px] transition-colors ${isActive ? 'font-semibold text-pri' : 'font-medium text-mut hover:text-ink'}`
           }
         >
           {({ isActive }) =>

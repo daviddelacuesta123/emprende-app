@@ -58,7 +58,7 @@ export default function Assistant() {
           <p className="text-[15px] text-mut">Pregúntame lo que quieras sobre emprender. Por ejemplo:</p>
           <div className="flex flex-wrap gap-2">
             {SUGGESTIONS.map((s) => (
-              <button key={s} onClick={() => send(s)} className="rounded-full border border-line bg-white px-3.5 py-2 text-[13px] font-medium">
+              <button key={s} onClick={() => send(s)} className="rounded-full border border-line bg-white px-3.5 py-2 text-[13px] font-medium transition hover:border-sub hover:bg-soft active:scale-[0.97]">
                 {s}
               </button>
             ))}
@@ -108,7 +108,7 @@ export default function Assistant() {
               placeholder="Escribe tu pregunta…"
               className="w-full bg-transparent text-[15px] outline-none placeholder:text-mut"
             />
-            <button disabled={!text.trim() || typing} className="flex size-[38px] shrink-0 items-center justify-center rounded-full bg-pri text-white disabled:opacity-40">
+            <button disabled={!text.trim() || typing} className="flex size-[38px] shrink-0 items-center justify-center rounded-full bg-pri text-white transition enabled:hover:scale-105 enabled:active:scale-95 disabled:opacity-40 motion-reduce:enabled:hover:scale-100">
               <ArrowUp size={18} />
             </button>
           </form>

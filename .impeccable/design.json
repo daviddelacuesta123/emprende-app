@@ -1,0 +1,376 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-05T23:54:12.704149+00:00",
+  "title": "Design System: EmprendiApp",
+  "extensions": {
+    "colorMeta": {
+      "tinta-pizarra": {
+        "role": "primary",
+        "displayName": "Tinta pizarra",
+        "canonical": "#0F172A",
+        "tonalRamp": [
+          "#020617",
+          "#0F172A",
+          "#1E293B",
+          "#334155",
+          "#64748B",
+          "#94A3B8",
+          "#CBD5E1",
+          "#F1F5F9"
+        ]
+      },
+      "papel": {
+        "role": "neutral",
+        "displayName": "Papel",
+        "canonical": "#F7F7F8",
+        "tonalRamp": [
+          "#030712",
+          "#111827",
+          "#1F2937",
+          "#374151",
+          "#6B7280",
+          "#9CA3AF",
+          "#D1D5DB",
+          "#F3F4F6"
+        ]
+      },
+      "hoja": {
+        "role": "neutral",
+        "displayName": "Hoja",
+        "canonical": "#FFFFFF",
+        "tonalRamp": [
+          "#030712",
+          "#111827",
+          "#1F2937",
+          "#374151",
+          "#6B7280",
+          "#9CA3AF",
+          "#D1D5DB",
+          "#F3F4F6"
+        ]
+      },
+      "tinta": {
+        "role": "neutral",
+        "displayName": "Tinta",
+        "canonical": "#111827",
+        "tonalRamp": [
+          "#030712",
+          "#111827",
+          "#1F2937",
+          "#374151",
+          "#6B7280",
+          "#9CA3AF",
+          "#D1D5DB",
+          "#F3F4F6"
+        ]
+      },
+      "gris-nota": {
+        "role": "neutral",
+        "displayName": "Gris nota",
+        "canonical": "#6B7280",
+        "tonalRamp": [
+          "#030712",
+          "#111827",
+          "#1F2937",
+          "#374151",
+          "#6B7280",
+          "#9CA3AF",
+          "#D1D5DB",
+          "#F3F4F6"
+        ]
+      },
+      "pizarra-clara": {
+        "role": "neutral",
+        "displayName": "Pizarra clara",
+        "canonical": "#94A3B8",
+        "tonalRamp": [
+          "#020617",
+          "#0F172A",
+          "#1E293B",
+          "#334155",
+          "#64748B",
+          "#94A3B8",
+          "#CBD5E1",
+          "#F1F5F9"
+        ]
+      },
+      "bruma": {
+        "role": "neutral",
+        "displayName": "Bruma",
+        "canonical": "#E2E8F0",
+        "tonalRamp": [
+          "#020617",
+          "#0F172A",
+          "#1E293B",
+          "#334155",
+          "#64748B",
+          "#94A3B8",
+          "#CBD5E1",
+          "#F1F5F9"
+        ]
+      },
+      "niebla": {
+        "role": "neutral",
+        "displayName": "Niebla",
+        "canonical": "#F1F5F9",
+        "tonalRamp": [
+          "#020617",
+          "#0F172A",
+          "#1E293B",
+          "#334155",
+          "#64748B",
+          "#94A3B8",
+          "#CBD5E1",
+          "#F1F5F9"
+        ]
+      },
+      "linea": {
+        "role": "neutral",
+        "displayName": "Línea",
+        "canonical": "#E5E7EB",
+        "tonalRamp": [
+          "#030712",
+          "#111827",
+          "#1F2937",
+          "#374151",
+          "#6B7280",
+          "#9CA3AF",
+          "#D1D5DB",
+          "#F3F4F6"
+        ]
+      },
+      "alerta": {
+        "role": "error",
+        "displayName": "Alerta",
+        "canonical": "#DC2626",
+        "tonalRamp": [
+          "#450A0A",
+          "#7F1D1D",
+          "#991B1B",
+          "#B91C1C",
+          "#DC2626",
+          "#F87171",
+          "#FECACA",
+          "#FEF2F2"
+        ]
+      },
+      "alerta-texto": {
+        "role": "error",
+        "displayName": "Texto de alerta",
+        "canonical": "#B91C1C",
+        "tonalRamp": [
+          "#450A0A",
+          "#7F1D1D",
+          "#991B1B",
+          "#B91C1C",
+          "#DC2626",
+          "#F87171",
+          "#FECACA",
+          "#FEF2F2"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Titular principal de la portada; de 44 px en celular a 68 px en computador."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Títulos de sección en la portada y las páginas legales."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Título de cada pantalla dentro de la app."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Texto corrido; 16–17 px en páginas públicas."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Etiquetas de campos, metadatos y notas."
+      }
+    },
+    "shadows": [
+      {
+        "name": "tarjeta-destacada",
+        "value": "0 24px 48px -24px rgb(15 23 42 / 0.25)",
+        "purpose": "Solo la tarjeta de la ruta en la portada."
+      },
+      {
+        "name": "boton-hover",
+        "value": "0 10px 24px -10px rgb(15 23 42 / 0.55)",
+        "purpose": "Botones de registro de la portada al pasar el mouse."
+      },
+      {
+        "name": "boton-flotante",
+        "value": "0 10px 15px -3px rgb(15 23 42 / 0.25), 0 0 0 4px #FFFFFF",
+        "purpose": "Botón central del Asistente en la barra de pestañas."
+      },
+      {
+        "name": "velo",
+        "value": "rgb(0 0 0 / 0.3)",
+        "purpose": "Fondo detrás de hojas inferiores y ventanas."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-avance",
+        "value": "cubic-bezier(0.2, 0.8, 0.2, 1)",
+        "purpose": "Curva de rise y pop-in."
+      },
+      {
+        "name": "rise",
+        "value": "0.5s; translateY(12px) a 0 con opacidad",
+        "purpose": "Entrada de bloques y burbujas."
+      },
+      {
+        "name": "pop-in",
+        "value": "0.35s; scale(0.6) a 1 con opacidad",
+        "purpose": "Chulos de actividades completadas."
+      },
+      {
+        "name": "grow-y",
+        "value": "lineal; scaleY(0) a 1",
+        "purpose": "Línea de la ruta que se llena paso a paso."
+      },
+      {
+        "name": "reveal",
+        "value": "0.7s ease-out; translateY(24px) a 0",
+        "purpose": "Secciones de la portada al entrar en pantalla."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botón principal",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "La única acción principal de cada pantalla.",
+      "html": "<button class=\"ds-btn-primary\">Empezar mi ruta <svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:10px;padding:14px 20px;font:600 15px/1 Inter,ui-sans-serif,system-ui,sans-serif;cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s;background:var(--color-pri,#0F172A);color:#fff;border:none;} .ds-btn-primary:hover{transform:translateY(-1px);box-shadow:0 10px 24px -10px rgb(15 23 42 / .55);} .ds-btn-primary:active{transform:scale(.98);} .ds-btn-primary:focus-visible{outline:2px solid #0F172A;outline-offset:2px;}"
+    },
+    {
+      "name": "Botón secundario",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Acciones secundarias junto al botón principal.",
+      "html": "<button class=\"ds-btn-secondary\">Cancelar</button>",
+      "css": ".ds-btn-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:10px;padding:14px 20px;font:600 15px/1 Inter,ui-sans-serif,system-ui,sans-serif;cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s;background:#fff;color:#111827;border:1px solid #E5E7EB;} .ds-btn-secondary:hover{background:#F1F5F9;} .ds-btn-secondary:active{transform:scale(.98);} .ds-btn-secondary:focus-visible{outline:2px solid #0F172A;outline-offset:2px;}"
+    },
+    {
+      "name": "Botón claro",
+      "kind": "button",
+      "refersTo": "button-light",
+      "description": "Acción dentro de superficies de tinta pizarra.",
+      "html": "<div class=\"ds-dark\"><button class=\"ds-btn-light\">Continuar <svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></button></div>",
+      "css": ".ds-dark{background:#0F172A;padding:16px;border-radius:12px;} .ds-btn-light{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:10px;padding:14px 20px;font:600 15px/1 Inter,ui-sans-serif,system-ui,sans-serif;cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s;background:#E2E8F0;color:#111827;border:none;} .ds-btn-light:hover{background:#fff;} .ds-btn-light:focus-visible{outline:2px solid #fff;outline-offset:2px;}"
+    },
+    {
+      "name": "Campo",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Campo con etiqueta arriba e icono a la izquierda.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Correo electrónico</span><span class=\"ds-field-box\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#94A3B8\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"2\" y=\"4\" width=\"20\" height=\"16\" rx=\"2\"/><path d=\"m22 7-10 6L2 7\"/></svg><input class=\"ds-field-input\" placeholder=\"tu@correo.com\"></span></label>",
+      "css": ".ds-field{display:flex;flex-direction:column;gap:6px;font-family:Inter,ui-sans-serif,system-ui,sans-serif;max-width:360px;} .ds-field-label{font-size:13px;font-weight:500;color:#6B7280;} .ds-field-box{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #E5E7EB;border-radius:10px;padding:0 14px;transition:border-color .15s;} .ds-field-box:focus-within{border-color:#0F172A;} .ds-field-input{flex:1;min-width:0;border:none;outline:none;background:transparent;padding:12px 0;font-size:15px;color:#111827;} .ds-field-input::placeholder{color:#94A3B8;}"
+    },
+    {
+      "name": "Tarjeta",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Contenedor plano con borde de línea.",
+      "html": "<div class=\"ds-card\"><p class=\"ds-card-title\">Encuentra y define tu idea</p><p class=\"ds-card-meta\">Lectura · 4 min</p></div>",
+      "css": ".ds-card{background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:16px;font-family:Inter,ui-sans-serif,system-ui,sans-serif;max-width:360px;} .ds-card-title{margin:0;font-size:15px;font-weight:600;color:#111827;} .ds-card-meta{margin:4px 0 0;font-size:13px;color:#6B7280;}"
+    },
+    {
+      "name": "Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Preguntas rápidas y etiquetas.",
+      "html": "<button class=\"ds-chip\">¿Cómo saco el RUT?</button>",
+      "css": ".ds-chip{background:#F1F5F9;color:#111827;border:none;border-radius:9999px;padding:6px 12px;font:500 13px/1.4 Inter,ui-sans-serif,system-ui,sans-serif;cursor:pointer;} .ds-chip:hover{background:#E2E8F0;} .ds-chip:focus-visible{outline:2px solid #0F172A;outline-offset:2px;}"
+    },
+    {
+      "name": "Menú lateral",
+      "kind": "nav",
+      "refersTo": "nav-item-active",
+      "description": "Navegación en computador; el elemento activo usa fondo niebla.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-item is-active\" href=\"#\">Inicio</a><a class=\"ds-nav-item\" href=\"#\">Ruta</a><a class=\"ds-nav-item\" href=\"#\">Asistente</a></nav>",
+      "css": ".ds-nav{display:flex;flex-direction:column;gap:4px;width:200px;padding:12px;background:#fff;border-right:1px solid #E5E7EB;font-family:Inter,ui-sans-serif,system-ui,sans-serif;} .ds-nav-item{padding:10px 12px;border-radius:10px;font-size:14px;font-weight:500;color:#6B7280;text-decoration:none;transition:background .15s,color .15s;} .ds-nav-item:hover{background:#F1F5F9;color:#111827;} .ds-nav-item.is-active{background:#F1F5F9;color:#111827;font-weight:600;}"
+    }
+  ],
+  "narrative": {
+    "northStar": "La libreta de ruta",
+    "overview": "EmprendiApp se ve como un cuaderno de trabajo bien llevado: tinta oscura sobre papel claro, cada cosa en su paso y nada que distraiga de lo que toca hacer hoy. El sistema es monocromo a propósito. Un solo color fuerte, la tinta pizarra, marca lo que se puede hacer y lo que ya se hizo; todo lo demás son grises fríos, hojas blancas y líneas finas. La personalidad no viene del color sino del orden, de los títulos en Bricolage Grotesque y de pequeños movimientos que muestran avance: un chulo que aparece, una línea que se llena, un precio que se calcula.\n\nLa densidad es media y tranquila. La app está pensada para 15 minutos al día en un celular, con una columna de máximo 430 px, tarjetas con borde fino en lugar de sombras y un solo botón principal por pantalla. Las páginas públicas (portada y páginas legales) amplían la escala tipográfica y el espacio entre secciones, pero usan exactamente la misma paleta.\n\nLa voz visual es seria y confiable, igual que la voz escrita: sin degradados, sin brillos, sin ilustraciones decorativas y sin promesas visuales que la app no cumpla.",
+    "keyCharacteristics": [
+      "Monocromo: tinta pizarra como único acento, con grises fríos y blanco.",
+      "Plano: profundidad con bordes de 1 px y fondos tonales; sombra solo en lo que flota.",
+      "Dos voces tipográficas: Bricolage Grotesque para titulares públicos, Inter para todo lo demás.",
+      "Movimiento que muestra avance y siempre respeta \"reducir movimiento\".",
+      "Pensado primero para celular: columna de 430 px, barra inferior y hojas que suben desde abajo."
+    ],
+    "rules": [
+      {
+        "name": "The One Ink Rule",
+        "body": "La tinta pizarra es el único acento. No se agrega otro color de marca; el rojo existe solo para errores y acciones destructivas.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ink-for-Action Rule",
+        "body": "El relleno sólido de tinta pizarra se reserva para acciones, estados completados y un solo momento destacado por pantalla. Las ilustraciones y muestras usan niebla o borde de línea, para que el botón principal siempre sea lo más fuerte.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Voices Rule",
+        "body": "Bricolage Grotesque solo aparece en tamaños de headline o mayores y en las tarjetas de muestra de la portada. Dentro de la app, los títulos van en Inter.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Money Rule",
+        "body": "Toda cifra en pesos que cambia (precio sugerido, totales) usa números tabulares para que no salte al actualizarse.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Next Step Rule",
+        "body": "Cada pantalla tiene un solo botón principal. Las acciones secundarias van como botón blanco con borde o como enlace.",
+        "section": "layout"
+      },
+      {
+        "name": "The Border-Before-Shadow Rule",
+        "body": "Una tarjeta en reposo se separa con borde de línea, nunca con sombra. La sombra es para elementos que flotan o responden al puntero.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do usar tinta pizarra (#0F172A) para el único botón principal de cada pantalla y para marcar lo completado.",
+      "Do separar tarjetas con borde de línea (#E5E7EB) sobre fondo papel (#F7F7F8).",
+      "Do usar Bricolage Grotesque 800 con tracking negativo solo en titulares de 30 px o más.",
+      "Do animar solo para mostrar avance (un chulo, una línea, una cifra) y agregar siempre la versión sin movimiento.",
+      "Do dar estado de foco visible (contorno de 2 px en tinta pizarra) a todo lo que se puede tocar.",
+      "Do escribir las cifras de dinero en pesos colombianos y con números tabulares."
+    ],
+    "donts": [
+      "Don't agregar un segundo color de marca, degradados ni texto con degradado.",
+      "Don't usar el relleno sólido de tinta pizarra en ilustraciones o decoraciones que compitan con el botón principal.",
+      "Don't poner sombras en tarjetas en reposo.",
+      "Don't usar gris nota (#6B7280) por debajo de 13 px.",
+      "Don't usar rojo fuera de errores y acciones destructivas.",
+      "Don't poner más de un botón principal por pantalla."
+    ]
+  }
+}

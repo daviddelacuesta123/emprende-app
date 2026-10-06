@@ -60,7 +60,7 @@ export function PasswordToggle({ shown, onToggle }) {
       type="button"
       onClick={onToggle}
       aria-label={shown ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-      className="-mr-1 shrink-0 p-1 text-mut"
+      className="-mr-1 shrink-0 rounded-md p-1 text-mut transition-colors hover:text-ink"
     >
       {shown ? <EyeOff size={18} strokeWidth={1.8} /> : <Eye size={18} strokeWidth={1.8} />}
     </button>
@@ -195,7 +195,7 @@ export default function Auth() {
       </div>
 
       {isRecover ? (
-        <button type="button" onClick={() => switchTo('login')} className="-mt-3 flex items-center gap-1.5 self-start text-[14px] font-semibold text-pri">
+        <button type="button" onClick={() => switchTo('login')} className="-mt-3 flex items-center gap-1.5 self-start text-[14px] font-semibold text-pri underline-offset-2 hover:underline">
           <ArrowLeft size={16} /> Volver a iniciar sesión
         </button>
       ) : (
@@ -210,7 +210,7 @@ export default function Auth() {
               role="tab"
               aria-selected={mode === id}
               onClick={() => switchTo(id)}
-              className={`rounded-[9px] py-2.5 text-[14px] font-semibold transition ${mode === id ? 'bg-white text-ink shadow-sm' : 'text-mut'}`}
+              className={`rounded-[9px] py-2.5 text-[14px] font-semibold transition ${mode === id ? 'bg-white text-ink shadow-sm' : 'text-mut hover:bg-white/50 hover:text-ink'}`}
             >
               {label}
             </button>
@@ -277,7 +277,7 @@ export default function Auth() {
           </div>
         )}
         {mode === 'login' && (
-          <button type="button" onClick={() => switchTo('recover')} className="-mt-2 self-end text-[13px] font-semibold text-pri">
+          <button type="button" onClick={() => switchTo('recover')} className="-mt-2 self-end text-[13px] font-semibold text-pri underline-offset-2 hover:underline">
             ¿Olvidaste tu contraseña?
           </button>
         )}
@@ -293,7 +293,7 @@ export default function Auth() {
           {!isRecover && (
             <p className="text-center text-[13px] text-mut">
               {copy.switchText}{' '}
-              <button type="button" onClick={() => switchTo(isReg ? 'login' : 'register')} className="font-semibold text-pri">
+              <button type="button" onClick={() => switchTo(isReg ? 'login' : 'register')} className="font-semibold text-pri underline-offset-2 hover:underline">
                 {copy.switchCta}
               </button>
             </p>

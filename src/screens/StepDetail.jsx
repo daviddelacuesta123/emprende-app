@@ -54,7 +54,7 @@ export default function StepDetail() {
           const now = a === nextAct
           const Icon = TYPE_ICON[a.type]
           return (
-            <button key={a.id} onClick={() => setOpenId(a.id)} className="flex w-full items-center gap-3 p-3.5 text-left">
+            <button key={a.id} onClick={() => setOpenId(a.id)} className="flex w-full items-center gap-3 p-3.5 text-left transition-colors first:rounded-t-xl last:rounded-b-xl hover:bg-soft">
               <span
                 className={`flex size-8 shrink-0 items-center justify-center rounded-full ${done ? 'bg-pri text-white' : now ? 'bg-acc' : 'bg-soft text-mut'}`}
               >
@@ -73,7 +73,7 @@ export default function StepDetail() {
       {template && (
         <section className="flex flex-col gap-2.5">
           <h2 className="text-[15px] font-semibold">Plantilla para este paso</h2>
-          <Card as="button" onClick={() => nav(`/plantillas/${template.id}`)} className="flex items-center gap-3 p-3.5 text-left">
+          <Card as="button" onClick={() => nav(`/plantillas/${template.id}`)} className="flex items-center gap-3 p-3.5 text-left transition-colors hover:border-sub hover:bg-soft/60">
             <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-soft">
               <FileText size={18} strokeWidth={1.8} />
             </span>
@@ -150,7 +150,7 @@ export default function StepDetail() {
                 </Button>
               )}
               {state.done[open.id] ? (
-                <Button variant="light" onClick={() => setDone(open.id, false)}>
+                <Button variant="secondary" onClick={() => setDone(open.id, false)}>
                   Marcar como pendiente
                 </Button>
               ) : (
