@@ -22,6 +22,15 @@ const toRows = (rows, plantilla) => {
   return mine.map((r) => ({ id: r.id, label: r.concepto, value: r.valor == null ? '' : String(r.valor) }))
 }
 
+// Pasos que se dan por superados según la etapa elegida en la bienvenida.
+const STAGE_SKIP = { start: 0, idea: 1, running: 2 }
+
+// Actividades de esos pasos. Cuentan para el avance, pero no se guardan como hechas ni suman a la racha.
+export const skippedActivities = (stage) =>
+  Object.fromEntries(
+    STEPS.slice(0, STAGE_SKIP[stage] ?? 0).flatMap((s) => s.activities.map((a) => [a.id, true])),
+  )
+
 const toMessage = (m) => ({ role: m.rol, text: m.texto, ...(m.accion ? { action: m.accion } : {}) })
 
 async function loadState(userId) {
@@ -44,7 +53,7 @@ async function loadState(userId) {
     tier: perfil.plan,
     stage: perfil.etapa,
     onboarded: perfil.onboarded,
-    done: Object.fromEntries(actividades.map((a) => [a.actividad_id, true])),
+    done: { ...skippedActivities(perfil.etapa), ...Object.fromEntries(actividades.map((a) => [a.actividad_id, true])) },
     doneAt: Object.fromEntries(actividades.map((a) => [a.actividad_id, a.completada_en])),
     calc: { costs: toRows(costos, 'precio'), margin: perfil.margen_ganancia },
     budget: toRows(costos, 'presupuesto'),
@@ -111,8 +120,9 @@ function createSync(userId, { onError, onLimit }) {
     if (Object.keys(perfil).length) enqueue('perfil', () => supabase.from('perfiles').update(perfil).eq('id', userId))
 
     if (next.done !== prev.done) {
-      const added = Object.keys(next.done).filter((id) => next.done[id] && !prev.done[id])
-      const removed = Object.keys(prev.done).filter((id) => prev.done[id] && !next.done[id])
+      const skipped = skippedActivities(next.stage)
+      const added = Object.keys(next.done).filter((id) => next.done[id] && !prev.done[id] && !skipped[id])
+      const removed = Object.keys(prev.done).filter((id) => prev.done[id] && !next.done[id] && !skipped[id])
       if (added.length)
         enqueue('done', () =>
           supabase
@@ -214,9 +224,10 @@ export function StoreProvider({ userId, children }) {
     const next = { ...prev, ...(typeof patch === 'function' ? patch(prev) : patch) }
     if (next.done !== prev.done) {
       const now = new Date().toISOString()
+      const skipped = skippedActivities(next.stage)
       next.doneAt = Object.fromEntries(
         Object.keys(next.done)
-          .filter((id) => next.done[id])
+          .filter((id) => next.done[id] && !skipped[id])
           .map((id) => [id, prev.doneAt[id] ?? now]),
       )
     }
@@ -255,6 +266,9 @@ export function StoreProvider({ userId, children }) {
 }
 
 export const useStore = () => useContext(Ctx)
+
+// Si la persona ya completó alguna actividad por su cuenta (sin contar los pasos saltados).
+export const hasStarted = (doneAt) => Object.keys(doneAt).length > 0
 
 export const stepProgress = (step, done) => {
   const n = step.activities.filter((a) => done[a.id]).length

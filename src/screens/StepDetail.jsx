@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { Navigate, useNavigate, useParams } from 'react-router'
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router'
 import { ArrowRight, BookOpen, Check, FileText, Lightbulb, PenLine, Sparkles, Users } from 'lucide-react'
 import { STEPS, TEMPLATES } from '../data'
-import { stepProgress, useStore } from '../store'
+import { hasStarted, stepProgress, useStore } from '../store'
 import { BackHeader, BottomBar, Button, Card, ProgressBar, Screen, Sheet } from '../ui'
 
 const TYPE_ICON = { read: BookOpen, exercise: PenLine, template: Users, ai: Sparkles }
@@ -11,7 +11,10 @@ export default function StepDetail() {
   const { id } = useParams()
   const { state, update } = useStore()
   const nav = useNavigate()
-  const [openId, setOpenId] = useState(null)
+  // El Inicio puede pedir que se abra una actividad directamente.
+  const [openId, setOpenId] = useState(useLocation().state?.open ?? null)
+  // Actividad recién completada cuando es la primera de la persona: muestra el aviso en lugar de cerrar.
+  const [firstWin, setFirstWin] = useState(null)
 
   const idx = STEPS.findIndex((s) => s.id === id)
   if (idx === -1) return <Navigate to="/ruta" replace />
@@ -24,6 +27,11 @@ export default function StepDetail() {
   const nextStep = STEPS[idx + 1]
 
   const setDone = (actId, value) => update((s) => ({ done: { ...s.done, [actId]: value } }))
+  const closeSheet = () => {
+    setOpenId(null)
+    setFirstWin(null)
+  }
+  const afterWin = firstWin && step.activities.find((a) => !state.done[a.id] && a.id !== firstWin)
 
   return (
     <Screen bottom="cta" className="gap-[18px]">
@@ -99,8 +107,33 @@ export default function StepDetail() {
         )}
       </BottomBar>
 
-      <Sheet open={!!open} onClose={() => setOpenId(null)}>
-        {open && (
+      <Sheet open={!!open || !!firstWin} onClose={closeSheet}>
+        {firstWin ? (
+          <div className="flex flex-col gap-4">
+            <span className="flex size-11 items-center justify-center rounded-full bg-pri text-white">
+              <Check size={22} strokeWidth={2.4} />
+            </span>
+            <div className="flex flex-col gap-1.5">
+              <h3 className="text-xl leading-snug font-bold">Hiciste tu primera actividad</h3>
+              <p className="text-[15px] leading-relaxed text-mut">Vuelve mañana para empezar tu racha. Cada actividad completada suma a tu avance.</p>
+            </div>
+            <div className="flex flex-col gap-2.5 pt-1">
+              {afterWin && (
+                <Button
+                  onClick={() => {
+                    setFirstWin(null)
+                    setOpenId(afterWin.id)
+                  }}
+                >
+                  Seguir con la siguiente <ArrowRight size={18} />
+                </Button>
+              )}
+              <Button variant={afterWin ? 'secondary' : 'primary'} onClick={() => nav('/')}>
+                Volver al inicio
+              </Button>
+            </div>
+          </div>
+        ) : open && (
           <div className="flex flex-col gap-4">
             <span className="text-[13px] font-medium text-mut">{open.meta}</span>
             <h3 className="-mt-2 text-xl leading-snug font-bold">{open.title}</h3>
@@ -123,8 +156,10 @@ export default function StepDetail() {
               ) : (
                 <Button
                   onClick={() => {
+                    const isFirst = !hasStarted(state.doneAt)
                     setDone(open.id, true)
                     setOpenId(null)
+                    if (isFirst) setFirstWin(open.id)
                   }}
                 >
                   <Check size={18} /> Marcar como hecha

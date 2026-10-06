@@ -55,7 +55,7 @@ export function AuthProvider({ children }) {
   }, [])
 
   // `legalVersion` queda guardada con la cuenta como prueba de la autorización (Ley 1581).
-  const register = useCallback(async ({ name, email, password, legalVersion }) => {
+  const register = useCallback(async ({ name = '', email, password, legalVersion }) => {
     const { data, error } = await supabase.auth.signUp({
       email: email.trim(),
       password,

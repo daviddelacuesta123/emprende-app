@@ -1,39 +1,51 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { ArrowRight, Compass, Lightbulb, Rocket } from 'lucide-react'
-import { STEPS } from '../data'
-import { useStore } from '../store'
+import { skippedActivities, useStore } from '../store'
 import { Button, Screen } from '../ui'
 
 export const STAGES = [
-  { id: 'start', Icon: Compass, title: 'Quiero emprender pero no sé por dónde empezar', sub: 'Te ayudamos a encontrar y definir tu idea', skip: 0 },
-  { id: 'idea', Icon: Lightbulb, title: 'Ya tengo una idea', sub: 'La validamos y armamos tu plan', skip: 1 },
-  { id: 'running', Icon: Rocket, title: 'Ya tengo un negocio en marcha', sub: 'Trámites, finanzas y más clientes', skip: 2 },
+  { id: 'start', Icon: Compass, title: 'Quiero emprender pero no sé por dónde empezar', sub: 'Te ayudamos a encontrar y definir tu idea' },
+  { id: 'idea', Icon: Lightbulb, title: 'Ya tengo una idea', sub: 'La validamos y armamos tu plan' },
+  { id: 'running', Icon: Rocket, title: 'Ya tengo un negocio en marcha', sub: 'Trámites, finanzas y más clientes' },
 ]
+
+// Etapa elegida en la portada antes de registrarse (la guarda la pantalla de acceso).
+export const STAGE_KEY = 'emprende:etapa'
+
+const pickedStage = () => {
+  try {
+    const id = sessionStorage.getItem(STAGE_KEY)
+    return STAGES.some((s) => s.id === id) ? id : null
+  } catch {
+    return null
+  }
+}
 
 export default function Onboarding() {
   const { state, update } = useStore()
   const nav = useNavigate()
   const [name, setName] = useState(state.name)
   const [business, setBusiness] = useState(state.business)
-  const [stage, setStage] = useState(state.stage ?? 'start')
+  const [stage, setStage] = useState(() => state.stage ?? pickedStage() ?? 'start')
 
   const submit = () => {
-    const skip = STAGES.find((s) => s.id === stage).skip
-    const done = {}
-    STEPS.slice(0, skip).forEach((s) => s.activities.forEach((a) => (done[a.id] = true)))
-    update({ onboarded: true, name: name.trim(), business: business.trim(), stage, done })
+    update((s) => ({
+      onboarded: true,
+      name: name.trim(),
+      business: business.trim(),
+      stage,
+      done: { ...skippedActivities(stage), ...s.done },
+    }))
+    try {
+      sessionStorage.removeItem(STAGE_KEY)
+    } catch {}
     nav('/', { replace: true })
   }
 
   return (
     <Screen bottom="none" className="gap-6">
-      <div className="flex gap-1.5 pt-3">
-        <span className="h-2 w-6 rounded-full bg-pri" />
-        <span className="h-2 w-2 rounded-full bg-sub/50" />
-        <span className="h-2 w-2 rounded-full bg-sub/50" />
-      </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 pt-3">
         <h1 className="text-[28px] leading-tight font-bold">¿En qué punto estás?</h1>
         <p className="text-base text-mut">Armamos tu ruta según tu etapa. No necesitas tener todo claro.</p>
       </div>
@@ -58,12 +70,14 @@ export default function Onboarding() {
         />
       </label>
 
-      <div className="flex flex-col gap-3">
+      <div role="group" aria-label="Tu etapa" className="flex flex-col gap-3">
         {STAGES.map(({ id, Icon, title, sub }) => {
           const sel = stage === id
           return (
             <button
               key={id}
+              type="button"
+              aria-pressed={sel}
               onClick={() => setStage(id)}
               className={`flex items-center gap-3.5 rounded-xl border bg-white p-4 text-left transition ${sel ? 'border-2 border-pri' : 'border-line'}`}
             >
@@ -81,7 +95,7 @@ export default function Onboarding() {
 
       <div className="mt-auto flex flex-col gap-3">
         <Button onClick={submit} disabled={!name.trim()}>
-          Crear mi ruta <ArrowRight size={18} />
+          Empezar mi ruta <ArrowRight size={18} />
         </Button>
         <p className="text-center text-[13px] text-mut">Gratis para empezar</p>
       </div>

@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, Navigate, useLocation } from 'react-router'
-import { ArrowLeft, ArrowRight, Eye, EyeOff, Lock, Mail, User } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Eye, EyeOff, Lock, Mail } from 'lucide-react'
 import { GOOGLE_ENABLED, useAuth } from '../auth'
 import { APP_NAME, Button, Logo, Screen } from '../ui'
 import { LEGAL_VERSION } from './Legal'
+import { STAGE_KEY } from './Onboarding'
 
 const MIN_PASSWORD = 6
 
@@ -29,16 +30,26 @@ const COPY = {
   },
 }
 
-export function Field({ Icon, label, hint, right, ...rest }) {
+export function Field({ Icon, label, hint, error, right, ...rest }) {
   return (
     <label className="flex flex-col gap-1.5">
       <span className="text-[13px] font-medium text-mut">{label}</span>
-      <span className="flex items-center gap-2.5 rounded-[10px] border border-line bg-white px-3.5 transition focus-within:border-pri">
+      <span
+        className={`flex items-center gap-2.5 rounded-[10px] border bg-white px-3.5 transition focus-within:border-pri ${error ? 'border-red-600' : 'border-line'}`}
+      >
         <Icon size={18} strokeWidth={1.8} className="shrink-0 text-sub" />
-        <input className="w-full min-w-0 bg-transparent py-3 text-[15px] outline-none placeholder:text-sub" {...rest} />
+        <input
+          aria-invalid={error ? true : undefined}
+          className="w-full min-w-0 bg-transparent py-3 text-[15px] outline-none placeholder:text-sub"
+          {...rest}
+        />
         {right}
       </span>
-      {hint && <span className="text-[12px] text-mut">{hint}</span>}
+      {error ? (
+        <span className="text-[12px] font-medium text-red-700">{error}</span>
+      ) : (
+        hint && <span className="text-[12px] text-mut">{hint}</span>
+      )}
     </label>
   )
 }
@@ -93,13 +104,22 @@ function LegalLinks() {
 
 export default function Auth() {
   const { session, hasAccounts, register, login, loginWithGoogle, recover } = useAuth()
-  const requested = useLocation().state?.mode
+  const { mode: requested, stage: pickedStage } = useLocation().state ?? {}
   const [mode, setMode] = useState(requested ?? (hasAccounts ? 'login' : 'register'))
-  const [form, setForm] = useState({ name: '', email: '', password: '', accepted: false })
+  const [form, setForm] = useState({ email: '', password: '', accepted: false })
+  const [tried, setTried] = useState(false)
   const [showPass, setShowPass] = useState(false)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [busy, setBusy] = useState(false)
+
+  // La etapa elegida en la portada espera en esta pestaña hasta la bienvenida.
+  useEffect(() => {
+    if (!pickedStage) return
+    try {
+      sessionStorage.setItem(STAGE_KEY, pickedStage)
+    } catch {}
+  }, [pickedStage])
 
   if (session) return <Navigate to="/" replace />
 
@@ -107,9 +127,14 @@ export default function Auth() {
   const isRecover = mode === 'recover'
   const copy = COPY[mode]
   const emailOk = /^\S+@\S+\.\S+$/.test(form.email.trim())
-  const valid = isRecover
-    ? emailOk
-    : emailOk && (isReg ? form.name.trim() && form.password.length >= MIN_PASSWORD && form.accepted : form.password)
+  const errors = {
+    email: !emailOk && 'Escribe un correo válido, como tu@correo.com.',
+    password: !isRecover && (isReg ? form.password.length < MIN_PASSWORD && `Usa al menos ${MIN_PASSWORD} caracteres.` : !form.password && 'Escribe tu contraseña.'),
+    accepted: isReg && !form.accepted && 'Marca la casilla para continuar.',
+  }
+  const valid = !Object.values(errors).some(Boolean)
+  // Los avisos de cada campo aparecen solo después de intentar enviar.
+  const show = (key) => (tried ? errors[key] || null : null)
 
   const set = (key) => (e) => {
     setForm((f) => ({ ...f, [key]: e.target.value }))
@@ -118,6 +143,7 @@ export default function Auth() {
 
   const switchTo = (m) => {
     setMode(m)
+    setTried(false)
     setError('')
     setNotice('')
   }
@@ -135,7 +161,11 @@ export default function Auth() {
 
   const submit = (e) => {
     e.preventDefault()
-    if (!valid || busy) return
+    if (busy) return
+    if (!valid) {
+      setTried(true)
+      return
+    }
     run(async () => {
       if (isRecover) {
         await recover(form.email)
@@ -203,9 +233,6 @@ export default function Auth() {
       )}
 
       <form onSubmit={submit} noValidate className="flex flex-1 flex-col gap-4">
-        {isReg && (
-          <Field Icon={User} label="Nombre" value={form.name} onChange={set('name')} placeholder="Tu nombre" autoComplete="given-name" />
-        )}
         <Field
           Icon={Mail}
           label="Correo electrónico"
@@ -216,6 +243,7 @@ export default function Auth() {
           placeholder="tu@correo.com"
           autoComplete="email"
           autoCapitalize="none"
+          error={show('email')}
         />
         {!isRecover && (
           <Field
@@ -227,21 +255,26 @@ export default function Auth() {
             placeholder={isReg ? 'Crea una contraseña' : 'Tu contraseña'}
             autoComplete={isReg ? 'new-password' : 'current-password'}
             hint={isReg ? `Mínimo ${MIN_PASSWORD} caracteres` : null}
+            error={show('password')}
             right={<PasswordToggle shown={showPass} onToggle={() => setShowPass((v) => !v)} />}
           />
         )}
         {isReg && (
-          <label className="flex items-start gap-3 text-[13px] leading-snug text-mut">
-            <input
-              type="checkbox"
-              checked={form.accepted}
-              onChange={(e) => setForm((f) => ({ ...f, accepted: e.target.checked }))}
-              className="mt-0.5 size-[18px] shrink-0 accent-pri"
-            />
-            <span>
-              Tengo 18 años o más y acepto los <LegalLinks />, incluida la transferencia de mis datos a proveedores fuera de Colombia.
-            </span>
-          </label>
+          <div className="flex flex-col gap-1.5">
+            <label className="flex items-start gap-3 text-[13px] leading-snug text-mut">
+              <input
+                type="checkbox"
+                checked={form.accepted}
+                onChange={(e) => setForm((f) => ({ ...f, accepted: e.target.checked }))}
+                aria-invalid={show('accepted') ? true : undefined}
+                className="mt-0.5 size-[18px] shrink-0 accent-pri"
+              />
+              <span>
+                Tengo 18 años o más y acepto los <LegalLinks />, incluida la transferencia de mis datos a proveedores fuera de Colombia.
+              </span>
+            </label>
+            {show('accepted') && <span className="pl-[30px] text-[12px] font-medium text-red-700">{show('accepted')}</span>}
+          </div>
         )}
         {mode === 'login' && (
           <button type="button" onClick={() => switchTo('recover')} className="-mt-2 self-end text-[13px] font-semibold text-pri">
@@ -253,9 +286,10 @@ export default function Auth() {
         {notice && !error && <Message>{notice}</Message>}
 
         <div className="mt-auto flex flex-col gap-3 pt-4">
-          <Button type="submit" disabled={!valid || busy}>
+          <Button type="submit" disabled={busy}>
             {copy.cta} <ArrowRight size={18} />
           </Button>
+          {isReg && <p className="-mt-1 text-center text-[13px] text-mut">Gratis. Sin tarjeta.</p>}
           {!isRecover && (
             <p className="text-center text-[13px] text-mut">
               {copy.switchText}{' '}
