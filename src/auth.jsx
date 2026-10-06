@@ -54,11 +54,12 @@ export function AuthProvider({ children }) {
     return () => data.subscription.unsubscribe()
   }, [])
 
-  const register = useCallback(async ({ name, email, password }) => {
+  // `legalVersion` queda guardada con la cuenta como prueba de la autorización (Ley 1581).
+  const register = useCallback(async ({ name, email, password, legalVersion }) => {
     const { data, error } = await supabase.auth.signUp({
       email: email.trim(),
       password,
-      options: { data: { name: name.trim() } },
+      options: { data: { name: name.trim(), acepto_terminos: legalVersion, acepto_terminos_en: new Date().toISOString() } },
     })
     if (error) throw new Error(friendly(error))
     remember()
