@@ -11,11 +11,13 @@ Tiene tres herramientas principales, que salen de lo que más pidieron las 40 pe
 ## Recorrido de un usuario nuevo
 
 1. **Portada.** Quien entra por primera vez ve una página que explica qué es EmprendiApp, con botones para crear una cuenta o iniciar sesión.
-2. **Registro.** Crea su cuenta con nombre, correo y contraseña.
+2. **Registro.** Crea su cuenta con correo y contraseña, y acepta los términos y la política de datos. Si en la portada eligió su etapa, esa elección llega marcada a la bienvenida.
 3. **Bienvenida.** Escribe su nombre, el de su emprendimiento (opcional) y elige en qué punto está:
    - *Quiero emprender pero no sé por dónde empezar:* la ruta empieza en el paso 1.
    - *Ya tengo una idea:* se da por hecho el paso 1 y empieza en el paso 2.
    - *Ya tengo un negocio en marcha:* se dan por hechos los pasos 1 y 2 y empieza en el paso 3.
+
+   Los pasos que se saltan cuentan como superados, pero no como actividades hechas: no suman a la racha.
 4. **Inicio.** Desde aquí usa la app. En celular navega con la barra inferior; en computador, con el menú lateral.
 
 Cuando vuelve más adelante con su sesión abierta, ve primero una pantalla de carga con el logo y luego su Inicio.
@@ -37,7 +39,8 @@ Las secciones aparecen suavemente a medida que se baja por la página. Si la per
 ### Acceso (registro e inicio de sesión)
 
 - Selector entre **Registro** e **Iniciar sesión**. Abre en una u otra según el botón que se tocó en la portada.
-- Registro: nombre, correo y contraseña de mínimo 6 caracteres.
+- Registro: correo, contraseña de mínimo 6 caracteres y la casilla de términos y política de datos. El nombre se pide después, en la bienvenida.
+- Si falta algo, el aviso aparece junto al campo al tocar el botón.
 - Inicio de sesión: correo y contraseña.
 - Se puede mostrar u ocultar la contraseña.
 - **¿Olvidaste tu contraseña?:** se escribe el correo y llega un enlace para crear una contraseña nueva. Si el enlace venció, la app lo explica y permite pedir otro.

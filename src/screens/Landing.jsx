@@ -345,9 +345,9 @@ const TOOLS = [
 
 // Las mismas etapas que se eligen en la bienvenida después de registrarse.
 const STAGES = [
-  ['Todavía no empiezo', 0],
-  ['Ya tengo una idea', 1],
-  ['Ya vendo algo', 2],
+  ['Todavía no empiezo', 0, 'start'],
+  ['Ya tengo una idea', 1, 'idea'],
+  ['Ya vendo algo', 2, 'running'],
 ]
 
 function StagePicker() {
@@ -357,15 +357,15 @@ function StagePicker() {
         <div className="flex flex-col gap-2">
           <h2 className="font-display text-[26px] leading-[1.1] font-extrabold tracking-[-0.02em] sm:text-[30px]">¿En qué punto estás hoy?</h2>
           <p className="max-w-[36rem] text-[16px] leading-relaxed text-mut">
-            Al crear tu cuenta eliges tu etapa y la ruta arranca donde te corresponde.
+            Elige una y la ruta arranca donde te corresponde.
           </p>
         </div>
         <ul className="grid divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white md:grid-cols-3 md:divide-x md:divide-y-0">
-          {STAGES.map(([label, step]) => (
+          {STAGES.map(([label, step, stage]) => (
             <li key={label}>
               <Link
                 to="/acceso"
-                state={{ mode: 'register' }}
+                state={{ mode: 'register', stage }}
                 className="group flex h-full items-center justify-between gap-4 px-5 py-5 transition-colors hover:bg-soft focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-pri sm:px-6"
               >
                 <span className="flex flex-col gap-1">
