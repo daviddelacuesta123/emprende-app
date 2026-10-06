@@ -596,7 +596,10 @@ export default function Landing() {
 
       <footer className="mx-auto flex max-w-6xl flex-col gap-2 px-4 pt-8 pb-28 text-[13px] text-mut sm:flex-row sm:justify-between sm:px-8 md:pb-8">
         <span>© 2026 {APP_NAME} · Hecho para emprendedores en Colombia</span>
-        <span>[FALTA: enlaces a Privacidad y Contacto]</span>
+        <span className="flex gap-5">
+          <Link to="/privacidad" className="hover:text-ink">Privacidad</Link>
+          <Link to="/terminos" className="hover:text-ink">Términos</Link>
+        </span>
       </footer>
 
       <StickyCta show={!heroCtaVisible && !closingVisible} />

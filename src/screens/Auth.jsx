@@ -3,6 +3,7 @@ import { Link, Navigate, useLocation } from 'react-router'
 import { ArrowLeft, ArrowRight, Eye, EyeOff, Lock, Mail, User } from 'lucide-react'
 import { GOOGLE_ENABLED, useAuth } from '../auth'
 import { APP_NAME, Button, Logo, Screen } from '../ui'
+import { LEGAL_VERSION } from './Legal'
 
 const MIN_PASSWORD = 6
 
@@ -75,11 +76,26 @@ function GoogleIcon() {
   )
 }
 
+function LegalLinks() {
+  const cls = 'font-semibold text-ink underline underline-offset-2'
+  return (
+    <>
+      <Link to="/terminos" target="_blank" className={cls}>
+        Términos y condiciones
+      </Link>{' '}
+      y la{' '}
+      <Link to="/privacidad" target="_blank" className={cls}>
+        Política de tratamiento de datos
+      </Link>
+    </>
+  )
+}
+
 export default function Auth() {
   const { session, hasAccounts, register, login, loginWithGoogle, recover } = useAuth()
   const requested = useLocation().state?.mode
   const [mode, setMode] = useState(requested ?? (hasAccounts ? 'login' : 'register'))
-  const [form, setForm] = useState({ name: '', email: '', password: '' })
+  const [form, setForm] = useState({ name: '', email: '', password: '', accepted: false })
   const [showPass, setShowPass] = useState(false)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
@@ -93,7 +109,7 @@ export default function Auth() {
   const emailOk = /^\S+@\S+\.\S+$/.test(form.email.trim())
   const valid = isRecover
     ? emailOk
-    : emailOk && (isReg ? form.name.trim() && form.password.length >= MIN_PASSWORD : form.password)
+    : emailOk && (isReg ? form.name.trim() && form.password.length >= MIN_PASSWORD && form.accepted : form.password)
 
   const set = (key) => (e) => {
     setForm((f) => ({ ...f, [key]: e.target.value }))
@@ -128,7 +144,7 @@ export default function Auth() {
         )
         return
       }
-      const result = await (isReg ? register(form) : login(form))
+      const result = await (isReg ? register({ ...form, legalVersion: LEGAL_VERSION }) : login(form))
       if (result?.needsConfirmation) {
         setNotice(`Te enviamos un correo a ${form.email.trim()}. Ábrelo para confirmar tu cuenta y luego inicia sesión.`)
         setMode('login')
@@ -177,6 +193,9 @@ export default function Auth() {
           <Button type="button" variant="secondary" disabled={busy} onClick={() => run(loginWithGoogle)}>
             <GoogleIcon /> Continuar con Google
           </Button>
+          <p className="-mt-1 text-center text-[12px] text-mut">
+            Al continuar con Google confirmas que tienes 18 años o más y aceptas los <LegalLinks />.
+          </p>
           <div className="flex items-center gap-3 text-[13px] text-mut">
             <span className="h-px flex-1 bg-line" />o con tu correo<span className="h-px flex-1 bg-line" />
           </div>
@@ -210,6 +229,19 @@ export default function Auth() {
             hint={isReg ? `Mínimo ${MIN_PASSWORD} caracteres` : null}
             right={<PasswordToggle shown={showPass} onToggle={() => setShowPass((v) => !v)} />}
           />
+        )}
+        {isReg && (
+          <label className="flex items-start gap-3 text-[13px] leading-snug text-mut">
+            <input
+              type="checkbox"
+              checked={form.accepted}
+              onChange={(e) => setForm((f) => ({ ...f, accepted: e.target.checked }))}
+              className="mt-0.5 size-[18px] shrink-0 accent-pri"
+            />
+            <span>
+              Tengo 18 años o más y acepto los <LegalLinks />, incluida la transferencia de mis datos a proveedores fuera de Colombia.
+            </span>
+          </label>
         )}
         {mode === 'login' && (
           <button type="button" onClick={() => switchTo('recover')} className="-mt-2 self-end text-[13px] font-semibold text-pri">

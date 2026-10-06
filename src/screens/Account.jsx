@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { ChevronRight, Crown, LogOut, Sparkles, Store } from 'lucide-react'
 import { useAuth } from '../auth'
 import { STEPS } from '../data'
@@ -166,6 +166,10 @@ export default function Account() {
         >
           Eliminar mi cuenta
         </button>
+        <p className="mt-2 flex justify-center gap-4 text-[12px] text-mut">
+          <Link to="/privacidad" className="hover:text-ink">Política de datos</Link>
+          <Link to="/terminos" className="hover:text-ink">Términos y condiciones</Link>
+        </p>
       </div>
 
       <Sheet open={!!editing} onClose={() => setEditing(null)}>
