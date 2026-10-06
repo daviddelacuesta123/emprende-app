@@ -1,0 +1,14 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "createdAt": "2026-10-05T23:42:57.694Z",
+        "reason": "user confirmed 2026-10-05: keep Inter for body text; personality comes from Bricolage Grotesque headings (DESIGN.md)"
+      }
+    ]
+  }
+}

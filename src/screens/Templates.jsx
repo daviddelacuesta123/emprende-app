@@ -30,7 +30,7 @@ export default function Templates() {
           <button
             key={c}
             onClick={() => setCat(c)}
-            className={`rounded-full px-3.5 py-2 text-[13px] font-medium ${cat === c ? 'bg-ink text-white' : 'bg-white'}`}
+            className={`rounded-full px-3.5 py-2 text-[13px] font-medium transition-colors ${cat === c ? 'bg-ink text-white' : 'bg-white hover:bg-acc'}`}
           >
             {c}
           </button>
@@ -41,7 +41,7 @@ export default function Templates() {
           <button
             key={t.id}
             onClick={() => nav(t.pro ? '/planes' : `/plantillas/${t.id}`)}
-            className="flex flex-col gap-2.5 rounded-xl bg-white p-3.5 text-left"
+            className="flex flex-col gap-2.5 rounded-xl bg-white p-3.5 text-left transition hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-14px_rgb(15_23_42/0.35)] active:scale-[0.98] motion-reduce:hover:translate-y-0"
           >
             <span className="flex items-center justify-between">
               <span className="flex size-10 items-center justify-center rounded-lg bg-soft">

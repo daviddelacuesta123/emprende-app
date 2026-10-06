@@ -79,7 +79,7 @@ export default function Onboarding() {
               type="button"
               aria-pressed={sel}
               onClick={() => setStage(id)}
-              className={`flex items-center gap-3.5 rounded-xl border bg-white p-4 text-left transition ${sel ? 'border-2 border-pri' : 'border-line'}`}
+              className={`flex items-center gap-3.5 rounded-xl border bg-white p-4 text-left transition ${sel ? 'border-2 border-pri' : 'border-line hover:border-sub'} active:scale-[0.99]`}
             >
               <span className={`flex size-11 shrink-0 items-center justify-center rounded-[10px] ${sel ? 'bg-pri text-white' : 'bg-soft text-pri'}`}>
                 <Icon size={22} strokeWidth={1.8} />

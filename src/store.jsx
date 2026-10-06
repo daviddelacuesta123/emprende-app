@@ -241,7 +241,7 @@ export function StoreProvider({ userId, children }) {
       <div className="flex min-h-dvh flex-col items-center justify-center gap-4 px-6 text-center">
         <p className="text-[17px] font-semibold">No pudimos cargar tus datos</p>
         <p className="max-w-sm text-[15px] text-mut">Revisa tu conexión a internet e intenta de nuevo.</p>
-        <button onClick={load} className="rounded-[10px] bg-pri px-5 py-3 text-[15px] font-semibold text-white">
+        <button onClick={load} className="rounded-[10px] bg-pri px-5 py-3 text-[15px] font-semibold text-white transition hover:-translate-y-px hover:shadow-[0_10px_24px_-10px_rgb(15_23_42/0.55)] active:scale-[0.98] motion-reduce:hover:translate-y-0">
           Reintentar
         </button>
       </div>

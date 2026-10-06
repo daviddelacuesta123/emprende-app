@@ -70,6 +70,21 @@
   }
 }
 
+/* Tailwind 4 deja el cursor de flecha en los botones: todo lo que se puede tocar muestra la mano. */
+@layer base {
+  button:not(:disabled),
+  [role="button"],
+  summary,
+  label:has(> input[type="checkbox"]),
+  input[type="checkbox"] {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+}
+
 html,
 body {
   background: var(--color-bg);
