@@ -63,12 +63,12 @@ function CostList({ heading, items, onChange }) {
               className="w-20 bg-transparent text-right text-[15px] font-medium outline-none placeholder:text-sub"
             />
           </span>
-          <button onClick={() => remove(i.id)} aria-label="Eliminar" className="p-1 text-sub">
+          <button onClick={() => remove(i.id)} aria-label="Eliminar" className="rounded-md p-1 text-sub transition-colors hover:bg-red-50 hover:text-red-600">
             <X size={16} />
           </button>
         </div>
       ))}
-      <button onClick={add} className="flex w-full items-center gap-1.5 px-3.5 py-3 text-sm font-medium text-mut">
+      <button onClick={add} className="flex w-full items-center gap-1.5 rounded-b-xl px-3.5 py-3 text-sm font-medium text-mut transition-colors hover:bg-soft hover:text-ink">
         <Plus size={16} /> Agregar costo
       </button>
     </Card>
@@ -125,7 +125,7 @@ function PriceCalculator({ title }) {
             <button
               key={m}
               onClick={() => setCalc({ margin: m })}
-              className={`flex-1 rounded-lg py-2 text-sm ${margin === m ? 'bg-white font-semibold' : 'font-medium text-mut'}`}
+              className={`flex-1 rounded-lg py-2 text-sm transition-colors ${margin === m ? 'bg-white font-semibold' : 'font-medium text-mut hover:bg-white/50 hover:text-ink'}`}
             >
               {m} %
             </button>
@@ -197,7 +197,7 @@ function BusinessPlan({ title }) {
             {!v.trim() && (
               <button
                 onClick={() => nav('/asistente', { state: { draft: `Ayúdame a escribir el bloque "${b.label}" de mi plan de negocio. Mi idea es: ` } })}
-                className="flex items-center gap-1.5 self-start rounded-full bg-soft px-2.5 py-1.5 text-xs font-medium"
+                className="flex items-center gap-1.5 self-start rounded-full bg-soft px-2.5 py-1.5 text-xs font-medium transition hover:bg-acc active:scale-[0.97]"
               >
                 <Sparkles size={14} /> Sugerir con IA
               </button>

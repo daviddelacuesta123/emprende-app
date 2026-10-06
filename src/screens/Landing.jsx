@@ -345,9 +345,9 @@ const TOOLS = [
 
 // Las mismas etapas que se eligen en la bienvenida después de registrarse.
 const STAGES = [
-  ['Todavía no empiezo', 0],
-  ['Ya tengo una idea', 1],
-  ['Ya vendo algo', 2],
+  ['Todavía no empiezo', 0, 'start'],
+  ['Ya tengo una idea', 1, 'idea'],
+  ['Ya vendo algo', 2, 'running'],
 ]
 
 function StagePicker() {
@@ -357,15 +357,15 @@ function StagePicker() {
         <div className="flex flex-col gap-2">
           <h2 className="font-display text-[26px] leading-[1.1] font-extrabold tracking-[-0.02em] sm:text-[30px]">¿En qué punto estás hoy?</h2>
           <p className="max-w-[36rem] text-[16px] leading-relaxed text-mut">
-            Al crear tu cuenta eliges tu etapa y la ruta arranca donde te corresponde.
+            Elige una y la ruta arranca donde te corresponde.
           </p>
         </div>
         <ul className="grid divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white md:grid-cols-3 md:divide-x md:divide-y-0">
-          {STAGES.map(([label, step]) => (
+          {STAGES.map(([label, step, stage]) => (
             <li key={label}>
               <Link
                 to="/acceso"
-                state={{ mode: 'register' }}
+                state={{ mode: 'register', stage }}
                 className="group flex h-full items-center justify-between gap-4 px-5 py-5 transition-colors hover:bg-soft focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-pri sm:px-6"
               >
                 <span className="flex flex-col gap-1">
@@ -596,7 +596,10 @@ export default function Landing() {
 
       <footer className="mx-auto flex max-w-6xl flex-col gap-2 px-4 pt-8 pb-28 text-[13px] text-mut sm:flex-row sm:justify-between sm:px-8 md:pb-8">
         <span>© 2026 {APP_NAME} · Hecho para emprendedores en Colombia</span>
-        <span>[FALTA: enlaces a Privacidad y Contacto]</span>
+        <span className="flex gap-5">
+          <Link to="/privacidad" className="hover:text-ink">Privacidad</Link>
+          <Link to="/terminos" className="hover:text-ink">Términos</Link>
+        </span>
       </footer>
 
       <StickyCta show={!heroCtaVisible && !closingVisible} />

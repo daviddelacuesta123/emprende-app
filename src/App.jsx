@@ -16,6 +16,7 @@ import Plans from './screens/Plans'
 import Account from './screens/Account'
 import Landing from './screens/Landing'
 import NewPassword from './screens/NewPassword'
+import { Privacy, Terms } from './screens/Legal'
 
 function RequireAuth() {
   const { session } = useAuth()
@@ -75,6 +76,8 @@ export default function App() {
         <div className="bg-bg">
           <Routes>
             <Route path="/conoce" element={<Navigate to="/" replace />} />
+            <Route path="/privacidad" element={<Privacy />} />
+            <Route path="/terminos" element={<Terms />} />
             <Route element={<CenteredLayout />}>
               <Route path="/acceso" element={<Auth />} />
               <Route path="/nueva-contrasena" element={<NewPassword />} />

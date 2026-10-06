@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { ArrowRight, Check, Flame, Sparkles } from 'lucide-react'
 import { STEPS } from '../data'
-import { currentStepIndex, nextActivities, streak, useStore } from '../store'
+import { currentStepIndex, hasStarted, nextActivities, streak, useStore } from '../store'
 import { Button, Card, ProgressBar, Screen } from '../ui'
 
 const QUICK = ['¿Cómo saco el RUT?', '¿Cuánto cobrar?']
@@ -21,7 +21,9 @@ export default function Home() {
   const ci = currentStepIndex(state.done)
   const step = STEPS[ci]
   const tasks = nextActivities(state.done, 3)
-  const started = Object.keys(state.done).length > 0
+  const started = hasStarted(state.doneAt)
+  // Mientras no haya completado nada, la tarjeta principal lleva directo a su primera actividad.
+  const first = !started && step ? step.activities.find((a) => !state.done[a.id]) : null
   const racha = streak(state.doneAt)
 
   const ask = (text) => text.trim() && nav('/asistente', { state: { q: text.trim() } })
@@ -32,7 +34,11 @@ export default function Home() {
       <div className="flex flex-col gap-1">
         <h1 className="text-[26px] font-bold">Hola, {state.name}</h1>
         <p className="text-[15px] text-mut">
-          {step ? (started ? `Vas muy bien. Hoy toca: ${step.title.toLowerCase()}.` : 'Empecemos por lo primero.') : 'Completaste toda la ruta.'}
+          {step
+            ? started
+              ? `Vas muy bien. Hoy toca: ${step.title.toLowerCase()}.`
+              : `Empecemos: tu ruta arranca en el paso ${ci + 1}.`
+            : 'Completaste toda la ruta.'}
         </p>
         {racha.days > 0 && (
           <p
@@ -50,10 +56,28 @@ export default function Home() {
           <span className="font-semibold">{step ? `Paso ${ci + 1} de ${STEPS.length}` : 'Completada'}</span>
         </div>
         <ProgressBar value={ci / STEPS.length} track="bg-white/15" bar="bg-acc" className="h-2" />
-        <p className="text-lg leading-snug font-semibold">
-          {step ? `Siguiente: ${step.title}` : 'Ya tienes las bases. Sigue usando el asistente y las plantillas.'}
-        </p>
-        {step && (
+        {first ? (
+          <>
+            <div className="flex flex-col gap-1">
+              <p className="text-lg leading-snug font-semibold">{first.title}</p>
+              <p className="text-[13px] text-sub">
+                Tu primera actividad · {first.meta}
+              </p>
+            </div>
+            <Button
+              variant="light"
+              className="self-start px-4 py-3"
+              onClick={() => nav(`/ruta/${step.id}`, { state: { open: first.id } })}
+            >
+              Empezar <ArrowRight size={18} />
+            </Button>
+          </>
+        ) : (
+          <p className="text-lg leading-snug font-semibold">
+            {step ? `Siguiente: ${step.title}` : 'Ya tienes las bases. Sigue usando el asistente y las plantillas.'}
+          </p>
+        )}
+        {step && !first && (
           <Button variant="light" className="self-start px-4 py-3" onClick={() => nav(`/ruta/${step.id}`)}>
             Continuar <ArrowRight size={18} />
           </Button>
@@ -80,7 +104,7 @@ export default function Home() {
           </form>
           <div className="flex flex-wrap gap-2">
             {QUICK.map((t) => (
-              <button key={t} onClick={() => ask(t)} className="rounded-full bg-soft px-3 py-1.5 text-[13px] font-medium">
+              <button key={t} onClick={() => ask(t)} className="rounded-full bg-soft px-3 py-1.5 text-[13px] font-medium transition hover:bg-acc active:scale-[0.97]">
                 {t}
               </button>
             ))}
@@ -98,7 +122,7 @@ export default function Home() {
           </div>
           <Card className="flex flex-col gap-3 p-4">
             {tasks.map((t) => (
-              <label key={t.id} className="flex cursor-pointer items-center gap-3">
+              <label key={t.id} className="group -mx-2 flex cursor-pointer items-center gap-3 rounded-[10px] px-2 py-1 transition-colors hover:bg-soft">
                 <input type="checkbox" className="peer sr-only" checked={!!state.done[t.id]} onChange={() => toggle(t.id)} />
                 <span className="flex size-[22px] shrink-0 items-center justify-center rounded-[5px] border-[1.5px] border-sub/70 peer-checked:border-pri peer-checked:bg-pri">
                   {state.done[t.id] && <Check size={14} className="text-white" strokeWidth={2.5} />}

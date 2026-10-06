@@ -22,7 +22,7 @@ export default function RouteList() {
             <Link
               key={s.id}
               to={`/ruta/${s.id}`}
-              className={`flex items-center gap-3.5 rounded-xl bg-white px-4 py-3.5 ${now ? 'border-2 border-pri' : 'border border-line'}`}
+              className={`flex items-center gap-3.5 rounded-xl bg-white px-4 py-3.5 transition active:scale-[0.99] ${now ? 'border-2 border-pri hover:shadow-[0_10px_24px_-14px_rgb(15_23_42/0.35)]' : 'border border-line hover:border-sub'}`}
             >
               <span
                 className={`flex size-9 shrink-0 items-center justify-center rounded-full text-[15px] ${

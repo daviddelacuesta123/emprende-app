@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { ChevronRight, Crown, LogOut, Sparkles, Store } from 'lucide-react'
 import { useAuth } from '../auth'
 import { STEPS } from '../data'
@@ -22,7 +22,7 @@ function Row({ label, value, placeholder, onClick, last }) {
   return (
     <Tag
       onClick={onClick}
-      className={`flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left ${last ? '' : 'border-b border-line'}`}
+      className={`flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left ${onClick ? 'transition-colors hover:bg-soft' : ''} ${last ? '' : 'border-b border-line'}`}
     >
       <span className="flex min-w-0 flex-col gap-0.5">
         <span className="text-[13px] text-mut">{label}</span>
@@ -95,7 +95,7 @@ export default function Account() {
       <section className="flex flex-col gap-3">
         <h2 className="text-[17px] font-semibold">Tu emprendimiento</h2>
         <Card className="flex flex-col gap-3.5 p-4">
-          <button onClick={() => openEdit('business')} className="flex items-center gap-3 text-left">
+          <button onClick={() => openEdit('business')} className="-m-1.5 flex items-center gap-3 rounded-xl p-1.5 text-left transition-colors hover:bg-soft">
             <span className="flex size-11 shrink-0 items-center justify-center rounded-[10px] bg-soft text-pri">
               <Store size={22} strokeWidth={1.8} />
             </span>
@@ -166,6 +166,10 @@ export default function Account() {
         >
           Eliminar mi cuenta
         </button>
+        <p className="mt-2 flex justify-center gap-4 text-[12px] text-mut">
+          <Link to="/privacidad" className="hover:text-ink">Política de datos</Link>
+          <Link to="/terminos" className="hover:text-ink">Términos y condiciones</Link>
+        </p>
       </div>
 
       <Sheet open={!!editing} onClose={() => setEditing(null)}>
