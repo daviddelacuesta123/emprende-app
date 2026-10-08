@@ -16,12 +16,13 @@ const SURVEY = [
 
 const REASSURANCE = 'Gratis para empezar. Sin tarjeta.'
 
-const btn = 'inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-[10px] px-5 py-3 text-[15px] font-semibold transition active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pri'
+const btn = 'inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-[10px] px-5 py-3 text-[15px] font-semibold transition active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2'
 
+// El anillo de foco toma el color contrario al fondo: blanco sobre la franja oscura, oscuro sobre fondo claro.
 function CtaRegister({ children = 'Crear mi cuenta gratis', light = false, className = '' }) {
   const tone = light
-    ? 'bg-white text-pri hover:bg-soft'
-    : 'bg-pri text-white hover:-translate-y-px hover:shadow-[0_10px_24px_-10px_rgb(15_23_42/0.55)] motion-reduce:hover:translate-y-0'
+    ? 'bg-white text-pri hover:bg-soft focus-visible:outline-white'
+    : 'bg-pri text-white hover:-translate-y-px hover:shadow-[0_10px_24px_-10px_rgb(15_23_42/0.55)] motion-reduce:hover:translate-y-0 focus-visible:outline-pri'
   return (
     <Link to="/acceso" state={{ mode: 'register' }} className={`${btn} ${tone} ${className}`}>
       {children}
@@ -554,7 +555,7 @@ export default function Landing() {
                 </div>
               </Reveal>
               <Reveal delay={250} className="flex flex-col gap-4 rounded-2xl bg-pri p-6 text-white">
-                <div className="flex items-baseline justify-between gap-3">
+                <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
                   <div className="flex items-center gap-2.5">
                     <h3 className="text-lg font-bold">Pro</h3>
                     <span className="rounded-full bg-white/12 px-2.5 py-0.5 text-[12px] font-semibold text-acc">Próximamente</span>

@@ -18,7 +18,7 @@ export default function NewPassword() {
   const [done, setDone] = useState(false)
 
   const mismatch = confirm.length > 0 && confirm !== password
-  const valid = password.length >= MIN_PASSWORD && confirm === password
+  const valid = password.trim().length >= MIN_PASSWORD && confirm === password
 
   const submit = async (e) => {
     e.preventDefault()
@@ -74,7 +74,7 @@ export default function NewPassword() {
         <>
           <div className="flex flex-col gap-2">
             <h1 className="text-[28px] leading-tight font-bold">Crea una contraseña nueva</h1>
-            <p className="text-base text-mut">Usa al menos {MIN_PASSWORD} caracteres.</p>
+            <p className="text-base text-mut">Usa al menos {MIN_PASSWORD} caracteres, sin contar espacios.</p>
           </div>
           <form onSubmit={submit} noValidate className="flex flex-1 flex-col gap-4">
             <Field

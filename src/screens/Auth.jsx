@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, Navigate, useLocation } from 'react-router'
+import { useEffect, useId, useRef, useState } from 'react'
+import { Link, Navigate, useLocation, useNavigate } from 'react-router'
 import { ArrowLeft, ArrowRight, Eye, EyeOff, Lock, Mail } from 'lucide-react'
 import { GOOGLE_ENABLED, useAuth } from '../auth'
 import { APP_NAME, Button, Logo, Screen } from '../ui'
@@ -30,27 +30,34 @@ const COPY = {
   },
 }
 
+// La etiqueta solo envuelve el título del campo: el error o la pista se leen como descripción, no como parte del nombre.
 export function Field({ Icon, label, hint, error, right, ...rest }) {
+  const id = useId()
+  const note = error || hint
   return (
-    <label className="flex flex-col gap-1.5">
-      <span className="text-[13px] font-medium text-mut">{label}</span>
+    <div className="flex flex-col gap-1.5">
+      <label htmlFor={id} className="text-[13px] font-medium text-mut">
+        {label}
+      </label>
       <span
         className={`flex items-center gap-2.5 rounded-[10px] border bg-white px-3.5 transition focus-within:border-pri ${error ? 'border-red-600' : 'border-line'}`}
       >
         <Icon size={18} strokeWidth={1.8} className="shrink-0 text-sub" />
         <input
+          id={id}
           aria-invalid={error ? true : undefined}
+          aria-describedby={note ? `${id}-nota` : undefined}
           className="w-full min-w-0 bg-transparent py-3 text-[15px] outline-none placeholder:text-sub"
           {...rest}
         />
         {right}
       </span>
-      {error ? (
-        <span className="text-[12px] font-medium text-red-700">{error}</span>
-      ) : (
-        hint && <span className="text-[12px] text-mut">{hint}</span>
+      {note && (
+        <span id={`${id}-nota`} className={`text-[12px] ${error ? 'font-medium text-red-700' : 'text-mut'}`}>
+          {note}
+        </span>
       )}
-    </label>
+    </div>
   )
 }
 
@@ -104,14 +111,35 @@ function LegalLinks() {
 
 export default function Auth() {
   const { session, hasAccounts, register, login, loginWithGoogle, recover } = useAuth()
-  const { mode: requested, stage: pickedStage } = useLocation().state ?? {}
-  const [mode, setMode] = useState(requested ?? (hasAccounts ? 'login' : 'register'))
+  const location = useLocation()
+  const navigate = useNavigate()
+  const { mode: requested, stage: pickedStage, from, recoverPushed } = location.state ?? {}
+  // El modo vive en el historial: "Recuperar" agrega una entrada, así el botón Atrás vuelve al formulario.
+  const mode = requested ?? (hasAccounts ? 'login' : 'register')
   const [form, setForm] = useState({ email: '', password: '', accepted: false })
   const [tried, setTried] = useState(false)
+  const [attempt, setAttempt] = useState(0)
   const [showPass, setShowPass] = useState(false)
   const [error, setError] = useState('')
-  const [notice, setNotice] = useState('')
+  // main.jsx trae aquí los enlaces de correo vencidos o ya usados.
+  const [notice, setNotice] = useState(() =>
+    new URLSearchParams(location.search).get('enlace') === 'vencido'
+      ? 'Ese enlace ya venció o ya se usó. Si aún no confirmaste tu correo, regístrate otra vez con el mismo correo y te enviaremos uno nuevo.'
+      : '',
+  )
   const [busy, setBusy] = useState(false)
+  const formRef = useRef(null)
+
+  // Tras un envío con errores, el foco va al primer campo inválido para que el lector de pantalla lea su aviso.
+  useEffect(() => {
+    if (attempt) formRef.current?.querySelector('[aria-invalid="true"]')?.focus()
+  }, [attempt])
+
+  // Al cambiar de modo (también con Atrás) los avisos del formulario anterior se limpian.
+  useEffect(() => {
+    setTried(false)
+    setError('')
+  }, [location.key])
 
   // La etapa elegida en la portada espera en esta pestaña hasta la bienvenida.
   useEffect(() => {
@@ -121,15 +149,16 @@ export default function Auth() {
     } catch {}
   }, [pickedStage])
 
-  if (session) return <Navigate to="/" replace />
+  // Tras entrar, vuelve a la página que se pidió sin sesión (solo rutas internas).
+  if (session) return <Navigate to={typeof from === 'string' && /^\/(?!\/)/.test(from) ? from : '/'} replace />
 
   const isReg = mode === 'register'
   const isRecover = mode === 'recover'
   const copy = COPY[mode]
-  const emailOk = /^\S+@\S+\.\S+$/.test(form.email.trim())
+  const emailOk = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[^\s@<>()[\]\\,;:".]{2,}$/.test(form.email.trim())
   const errors = {
     email: !emailOk && 'Escribe un correo válido, como tu@correo.com.',
-    password: !isRecover && (isReg ? form.password.length < MIN_PASSWORD && `Usa al menos ${MIN_PASSWORD} caracteres.` : !form.password && 'Escribe tu contraseña.'),
+    password: !isRecover && (isReg ? form.password.trim().length < MIN_PASSWORD && `Usa al menos ${MIN_PASSWORD} caracteres, sin contar espacios.` : !form.password && 'Escribe tu contraseña.'),
     accepted: isReg && !form.accepted && 'Marca la casilla para continuar.',
   }
   const valid = !Object.values(errors).some(Boolean)
@@ -139,14 +168,23 @@ export default function Auth() {
   const set = (key) => (e) => {
     setForm((f) => ({ ...f, [key]: e.target.value }))
     setError('')
+    // El aviso nombra el correo escrito: si cambia, ya no aplica.
+    if (key === 'email') setNotice('')
   }
 
+  const goMode = (m) =>
+    navigate(location.pathname + location.search, {
+      state: { ...location.state, mode: m, recoverPushed: m === 'recover' },
+      replace: m !== 'recover',
+    })
+
   const switchTo = (m) => {
-    setMode(m)
-    setTried(false)
-    setError('')
+    goMode(m)
     setNotice('')
   }
+
+  // Si "Recuperar" se abrió desde este formulario, volver es retroceder en el historial.
+  const leaveRecover = () => (recoverPushed ? navigate(-1) : switchTo('login'))
 
   const run = async (task) => {
     setBusy(true)
@@ -164,6 +202,7 @@ export default function Auth() {
     if (busy) return
     if (!valid) {
       setTried(true)
+      setAttempt((n) => n + 1)
       return
     }
     run(async () => {
@@ -176,8 +215,8 @@ export default function Auth() {
       }
       const result = await (isReg ? register({ ...form, legalVersion: LEGAL_VERSION }) : login(form))
       if (result?.needsConfirmation) {
+        goMode('login')
         setNotice(`Te enviamos un correo a ${form.email.trim()}. Ábrelo para confirmar tu cuenta y luego inicia sesión.`)
-        setMode('login')
       }
     })
   }
@@ -195,7 +234,7 @@ export default function Auth() {
       </div>
 
       {isRecover ? (
-        <button type="button" onClick={() => switchTo('login')} className="-mt-3 flex items-center gap-1.5 self-start text-[14px] font-semibold text-pri underline-offset-2 hover:underline">
+        <button type="button" onClick={leaveRecover} className="-mt-3 flex items-center gap-1.5 self-start text-[14px] font-semibold text-pri underline-offset-2 hover:underline">
           <ArrowLeft size={16} /> Volver a iniciar sesión
         </button>
       ) : (
@@ -210,7 +249,7 @@ export default function Auth() {
               role="tab"
               aria-selected={mode === id}
               onClick={() => switchTo(id)}
-              className={`rounded-[9px] py-2.5 text-[14px] font-semibold transition ${mode === id ? 'bg-white text-ink shadow-sm' : 'text-mut hover:bg-white/50 hover:text-ink'}`}
+              className={`rounded-[9px] py-2.5 text-[14px] font-semibold transition ${mode === id ? 'bg-white text-ink shadow-sm' : 'text-ink/70 hover:bg-white/50 hover:text-ink'}`}
             >
               {label}
             </button>
@@ -232,7 +271,7 @@ export default function Auth() {
         </div>
       )}
 
-      <form onSubmit={submit} noValidate className="flex flex-1 flex-col gap-4">
+      <form ref={formRef} onSubmit={submit} noValidate className="flex flex-1 flex-col gap-4">
         <Field
           Icon={Mail}
           label="Correo electrónico"
@@ -267,13 +306,18 @@ export default function Auth() {
                 checked={form.accepted}
                 onChange={(e) => setForm((f) => ({ ...f, accepted: e.target.checked }))}
                 aria-invalid={show('accepted') ? true : undefined}
+                aria-describedby={show('accepted') ? 'acepto-error' : undefined}
                 className="mt-0.5 size-[18px] shrink-0 accent-pri"
               />
               <span>
                 Tengo 18 años o más y acepto los <LegalLinks />, incluida la transferencia de mis datos a proveedores fuera de Colombia.
               </span>
             </label>
-            {show('accepted') && <span className="pl-[30px] text-[12px] font-medium text-red-700">{show('accepted')}</span>}
+            {show('accepted') && (
+              <span id="acepto-error" className="pl-[30px] text-[12px] font-medium text-red-700">
+                {show('accepted')}
+              </span>
+            )}
           </div>
         )}
         {mode === 'login' && (

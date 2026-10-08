@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from 'react-router'
 import { AuthProvider, useAuth } from './auth'
 import { StoreProvider, useStore } from './store'
@@ -20,8 +20,14 @@ import { Privacy, Terms } from './screens/Legal'
 
 function RequireAuth() {
   const { session } = useAuth()
-  const { pathname } = useLocation()
-  if (!session) return pathname === '/' ? <Landing /> : <Navigate to="/" replace />
+  const { pathname, search } = useLocation()
+  const hadSession = useRef(false)
+  if (session) hadSession.current = true
+  if (!session) {
+    if (pathname === '/') return <Landing />
+    // Al cerrar sesión se vuelve a la portada; un enlace abierto sin sesión pide entrar y después regresa a él.
+    return hadSession.current ? <Navigate to="/" replace /> : <Navigate to="/acceso" replace state={{ from: pathname + search }} />
+  }
   return (
     <StoreProvider key={session} userId={session}>
       <Outlet />
